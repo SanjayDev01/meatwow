@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
+import 'home_screen.dart';
+import 'login_screen.dart';
+
 class OTPScreen extends StatefulWidget {
   const OTPScreen({Key? key}) : super(key: key);
 
@@ -183,7 +186,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => OTPScreen()));
+                                  builder: (context) => LoginScreen()));
                         },
                         child: Text(
                           "Verify",

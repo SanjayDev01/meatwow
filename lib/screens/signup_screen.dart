@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meatwow/screens/otp_screen.dart';
 
-import 'home_screen.dart';
-
-class LoginScreen extends StatelessWidget {
+class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,11 +31,11 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 117.07,
+                  height: 63.07,
                 ),
                 Center(
                   child: Text(
-                    "Login",
+                    "Sign Up",
                     style: TextStyle(
                         fontFamily: "Mulish",
                         fontSize: 25.11,
@@ -48,6 +46,92 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 58.04,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    51.07,
+                    0,
+                    238.56,
+                    11.72,
+                  ),
+                  child: Text(
+                    "Name",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                      color: Color.fromRGBO(53, 53, 53, 1),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    36.84,
+                    0,
+                    36.84,
+                    0,
+                  ),
+                  child: CupertinoTextField(
+                    placeholder: "Name",
+                    placeholderStyle: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromRGBO(175, 175, 175, 1),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Mulish",
+                    ),
+                    style: TextStyle(
+                      fontSize: 11.72,
+                      color: Color.fromRGBO(175, 175, 175, 1),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Mulish",
+                    ),
+                    keyboardType: TextInputType.phone,
+                    padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    51.07,
+                    18,
+                    238.56,
+                    11.72,
+                  ),
+                  child: Text(
+                    "Email",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                      color: Color.fromRGBO(53, 53, 53, 1),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    36.84,
+                    0,
+                    36.84,
+                    0,
+                  ),
+                  child: CupertinoTextField(
+                    placeholder: "Email",
+                    placeholderStyle: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromRGBO(175, 175, 175, 1),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Mulish",
+                    ),
+                    style: TextStyle(
+                      fontSize: 11.72,
+                      color: Color.fromRGBO(175, 175, 175, 1),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Mulish",
+                    ),
+                    keyboardType: TextInputType.phone,
+                    padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
@@ -136,24 +220,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    271.1,
-                    9.55,
-                    38.84,
-                    11.72,
-                  ),
-                  child: Text(
-                    "Forgot Password",
-                    style: TextStyle(
-                      fontFamily: "Mulish",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      fontStyle: FontStyle.normal,
-                      color: Color.fromRGBO(117, 116, 116, 1),
-                    ),
-                  ),
-                ),
-                Padding(
                   padding: const EdgeInsets.fromLTRB(36.84, 22.6, 36.84, 0),
                   child: Container(
                     width: 380.32,
@@ -165,10 +231,10 @@ class LoginScreen extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
+                                builder: (context) => OTPScreen()));
                       },
                       child: Text(
-                        "Login",
+                        "Get OTP",
                         style: TextStyle(
                           fontFamily: "Mulish",
                           fontSize: 15,
@@ -191,6 +257,39 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 47.24),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(33.93, 0, 33.93, 45.9),
+                  child: Row(
+                    children: [
+                      Text(
+                        "By signing in you agree to our",
+                        style: TextStyle(
+                          fontFamily: "Mulish",
+                          fontSize: 12.35,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.normal,
+                          color: Color(0xfbb757474),
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      TextButton(
+                        child: Text(
+                          "terms and conditions",
+                          style: TextStyle(
+                            fontFamily: "Mulish",
+                            fontSize: 12.35,
+                            fontWeight: FontWeight.w600,
+                            fontStyle: FontStyle.normal,
+                            color: Color.fromRGBO(163, 18, 28, 1),
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

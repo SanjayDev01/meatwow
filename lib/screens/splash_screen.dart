@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meatwow/screens/signup_screen.dart';
 import 'dart:async';
 
 import 'login_screen.dart';
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(
         Duration(seconds: 5),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginScreen())));
+            context, MaterialPageRoute(builder: (context) => SignUpScreen())));
   }
 
   @override
