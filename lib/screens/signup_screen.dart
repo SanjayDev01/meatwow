@@ -18,7 +18,7 @@ class SignUpScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
                     87,
-                    83,
+                    63,
                     87,
                     0,
                   ),
@@ -31,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 63.07,
+                  height: 43.07,
                 ),
                 Center(
                   child: Text(
