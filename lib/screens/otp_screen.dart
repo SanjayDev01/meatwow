@@ -192,7 +192,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           "Verify",
                           style: TextStyle(
                             fontFamily: "Mulish",
-                            fontSize: 11.72,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
                             color: Color.fromRGBO(

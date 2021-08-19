@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meatwow/screens/home_screen.dart';
 import 'package:meatwow/screens/splash_screen.dart';
 
 void main() => runApp(MyApp());
