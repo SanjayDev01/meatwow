@@ -419,34 +419,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "1kg",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "1kg",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
                                 color: Color.fromRGBO(
                                   53,
                                   53,
                                   53,
                                   1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                53,
-                                53,
-                                53,
-                                1,
+                                ),
                               ),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                       ),
@@ -455,34 +458,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "500g",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                204,
-                                204,
-                                204,
-                                1,
-                              ),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "500g",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
                             ),
-                            borderRadius: BorderRadius.circular(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Color.fromRGBO(
+                                  204,
+                                  204,
+                                  204,
+                                  1,
+                                ),
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -491,34 +497,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "250g",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                204,
-                                204,
-                                204,
-                                1,
-                              ),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "250g",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
                             ),
-                            borderRadius: BorderRadius.circular(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Color.fromRGBO(
+                                  204,
+                                  204,
+                                  204,
+                                  1,
+                                ),
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -527,34 +536,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "200g",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                204,
-                                204,
-                                204,
-                                1,
-                              ),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "200g",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
                             ),
-                            borderRadius: BorderRadius.circular(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Color.fromRGBO(
+                                  204,
+                                  204,
+                                  204,
+                                  1,
+                                ),
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -586,34 +598,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "S",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "S",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
                                 color: Color.fromRGBO(
                                   53,
                                   53,
                                   53,
                                   1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                53,
-                                53,
-                                53,
-                                1,
+                                ),
                               ),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                       ),
@@ -622,34 +637,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "M",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                204,
-                                204,
-                                204,
-                                1,
-                              ),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "M",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
                             ),
-                            borderRadius: BorderRadius.circular(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Color.fromRGBO(
+                                  204,
+                                  204,
+                                  204,
+                                  1,
+                                ),
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -658,34 +676,37 @@ class _ProductDetailState extends State<ProductDetail> {
                           left: 10,
                           top: 16.33,
                         ),
-                        child: Container(
-                          width: 55,
-                          height: 55,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "L",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color.fromRGBO(
-                                204,
-                                204,
-                                204,
-                                1,
-                              ),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 55,
+                            height: 55,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "L",
+                              style: TextStyle(
+                                  fontFamily: "Mulish",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(
+                                    53,
+                                    53,
+                                    53,
+                                    1,
+                                  )),
                             ),
-                            borderRadius: BorderRadius.circular(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Color.fromRGBO(
+                                  204,
+                                  204,
+                                  204,
+                                  1,
+                                ),
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -759,7 +780,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       const EdgeInsets.only(
                                                           left: 13),
                                                   child: Text(
-                                                    "Chicken Breast",
+                                                    "Desi Eggs",
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         fontFamily: "Mulish",
@@ -778,7 +799,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       const EdgeInsets.only(
                                                           left: 13),
                                                   child: Text(
-                                                    "Boneless",
+                                                    "Eggs",
                                                     style: TextStyle(
                                                         fontSize: 11,
                                                         fontFamily: "Mulish",
@@ -846,7 +867,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 left: 13,
                                               ),
                                               child: Text(
-                                                "Net Wet: 500gm",
+                                                "Net Wet: 12 Pcs",
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontFamily: "Mulish",
@@ -935,7 +956,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       const EdgeInsets.only(
                                                           left: 13),
                                                   child: Text(
-                                                    "Chicken Breast",
+                                                    "Desi Eggs",
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         fontFamily: "Mulish",
@@ -954,7 +975,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       const EdgeInsets.only(
                                                           left: 13),
                                                   child: Text(
-                                                    "Boneless",
+                                                    "Eggs",
                                                     style: TextStyle(
                                                         fontSize: 11,
                                                         fontFamily: "Mulish",
@@ -1022,7 +1043,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 left: 13,
                                               ),
                                               child: Text(
-                                                "Net Wet: 500gm",
+                                                "Net Wet: 12 Pcs",
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontFamily: "Mulish",
@@ -1073,28 +1094,31 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                   ),
                   SizedBox(height: 40),
-                  Container(
-                    height: 54,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    color: Color.fromRGBO(
-                      163,
-                      18,
-                      28,
-                      1,
-                    ),
-                    child: Text(
-                      "Add To Cart",
-                      style: TextStyle(
-                        color: Color.fromRGBO(
-                          255,
-                          255,
-                          255,
-                          1,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      height: 54,
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.center,
+                      color: Color.fromRGBO(
+                        163,
+                        18,
+                        28,
+                        1,
+                      ),
+                      child: Text(
+                        "Add To Cart",
+                        style: TextStyle(
+                          color: Color.fromRGBO(
+                            255,
+                            255,
+                            255,
+                            1,
+                          ),
+                          fontSize: 18,
+                          fontFamily: "Mulish",
+                          fontWeight: FontWeight.w700,
                         ),
-                        fontSize: 18,
-                        fontFamily: "Mulish",
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
