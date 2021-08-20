@@ -84,7 +84,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
@@ -127,11 +127,11 @@ class LoginScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.text,
                     padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),

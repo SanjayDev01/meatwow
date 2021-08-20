@@ -82,11 +82,11 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.name,
                     padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
@@ -125,11 +125,11 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.emailAddress,
                     padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
@@ -168,11 +168,13 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
+                      //color: Color.fromRGBO(175, 175, 175, 1),
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
                     keyboardType: TextInputType.phone,
+                    maxLength: 12,
                     padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
@@ -211,11 +213,11 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 11.72,
-                      color: Color.fromRGBO(175, 175, 175, 1),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontFamily: "Mulish",
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.text,
                     padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
@@ -261,6 +263,7 @@ class SignUpScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33.93, 0, 33.93, 45.9),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "By signing in you agree to our",
