@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:meatwow/screens/cart_page.dart';
 import 'package:meatwow/screens/product_category.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,7 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding:
                                   const EdgeInsets.fromLTRB(28, 15, 27.91, 0),
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CartPage()));
+                                  },
                                   icon: Icon(
                                     Icons.shopping_cart_outlined,
                                     size: 24,

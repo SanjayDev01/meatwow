@@ -1,8 +1,69 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meatwow/models/signup_model.dart';
 import 'package:meatwow/screens/otp_screen.dart';
+import 'package:meatwow/services/api_service.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController _nameController = TextEditingController();
+
+  TextEditingController _emailController = TextEditingController();
+
+  TextEditingController _phoneController = TextEditingController();
+
+  TextEditingController _passwordController = TextEditingController();
+
+  late SignUpRequest signUpRequest;
+
+  @override
+  void initState() {
+    super.initState();
+    signUpRequest = SignUpRequest(
+      name: _nameController.text,
+      email: _emailController.text,
+      phoneNumber: _phoneController.text,
+      password: _passwordController.text,
+    );
+  }
+
+  bool validated = false;
+
+  apiCall() {
+    APIService apiService = APIService();
+    apiService.signUp(signUpRequest).then((value) {
+      if (value.otpId.isNotEmpty) {
+        print(value.otpId);
+      } else {
+        print("No OTP Id");
+      }
+    });
+  }
+
+  validateFields(context) {
+    if ((_nameController.text.length >= 3) &&
+        (_emailController.text.characters.contains("@")) &&
+        (_phoneController.text.length == 10) &&
+        (_passwordController.text.length >= 3)) {
+      apiCall();
+      print("Validated !");
+      setState(() {
+        validated = true;
+      });
+    } else {
+      final snackBar = SnackBar(content: Text('Fill the form correctly!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+        validated = false;
+      });
+    }
+    return validated;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +135,8 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   child: CupertinoTextField(
                     placeholder: "Name",
+                    controller: _nameController,
+                    onChanged: (input) => signUpRequest.name = input,
                     placeholderStyle: TextStyle(
                       fontSize: 15,
                       color: Color.fromRGBO(175, 175, 175, 1),
@@ -117,6 +180,8 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   child: CupertinoTextField(
                     placeholder: "Email",
+                    controller: _emailController,
+                    onChanged: (input) => signUpRequest.email = input,
                     placeholderStyle: TextStyle(
                       fontSize: 15,
                       color: Color.fromRGBO(175, 175, 175, 1),
@@ -160,6 +225,9 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   child: CupertinoTextField(
                     placeholder: "Phone",
+                    controller: _phoneController,
+                    onChanged: (input) => signUpRequest.phoneNumber = input,
+                    maxLines: 1,
                     placeholderStyle: TextStyle(
                       fontSize: 15,
                       color: Color.fromRGBO(175, 175, 175, 1),
@@ -205,6 +273,10 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   child: CupertinoTextField(
                     placeholder: "Password",
+                    maxLines: 1,
+                    controller: _passwordController,
+                    onChanged: (input) => signUpRequest.password = input,
+                    obscureText: true,
                     placeholderStyle: TextStyle(
                       fontSize: 15,
                       color: Color.fromRGBO(175, 175, 175, 1),
@@ -234,6 +306,9 @@ class SignUpScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => OTPScreen()));
+                        // validateFields(context)
+                        //     ? apiCall()
+                        //     : print("Everything Failed");
                       },
                       child: Text(
                         "Get OTP",

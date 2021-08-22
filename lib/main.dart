@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:meatwow/screens/cart_page.dart';
 import 'package:meatwow/screens/home_screen.dart';
+import 'package:meatwow/screens/order_screen.dart';
 import 'package:meatwow/screens/product_category.dart';
+import 'package:meatwow/screens/product_detail.dart';
 import 'package:meatwow/screens/splash_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -12,7 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: OrderScreen(),
+      title: "MeatWOW",
       builder: (context, widget) => ResponsiveWrapper.builder(
         BouncingScrollWrapper.builder(context, widget!),
         maxWidth: 1200,

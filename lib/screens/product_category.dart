@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:meatwow/screens/product_detail.dart';
 
+import 'cart_page.dart';
+
 class ProductCategory extends StatefulWidget {
   @override
   _ProductCategoryState createState() => _ProductCategoryState();
@@ -60,7 +62,12 @@ class _ProductCategoryState extends State<ProductCategory> {
                               padding:
                                   const EdgeInsets.fromLTRB(28, 15, 27.91, 0),
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CartPage()));
+                                  },
                                   icon: Icon(
                                     Icons.shopping_cart_outlined,
                                     size: 24,
