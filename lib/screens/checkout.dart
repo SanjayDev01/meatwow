@@ -339,7 +339,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       color: Color.fromRGBO(117, 116, 116, 1),
                     ),
                   ),
-                )
+                ),
+                SizedBox(
+                  height: 60,
+                ),
               ],
             ),
             GestureDetector(

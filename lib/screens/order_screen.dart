@@ -497,7 +497,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   1,
                 ),
                 child: Text(
-                  "go to home",
+                  "Go to home",
                   style: TextStyle(
                     color: Color.fromRGBO(
                       255,

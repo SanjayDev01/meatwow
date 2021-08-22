@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meatwow/screens/cart_page.dart';
+import 'package:meatwow/screens/my_account.dart';
 import 'package:meatwow/screens/product_category.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,7 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(18, 18, 0, 0),
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MyAccount()));
+                                },
                                 icon: Icon(
                                   Icons.menu,
                                   size: 24,
