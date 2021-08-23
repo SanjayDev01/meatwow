@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:meatwow/screens/signup_screen.dart';
 import 'dart:async';
 
-import 'login_screen.dart';
-
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:meatwow/models/signup_model.dart';
 import 'dart:convert';
