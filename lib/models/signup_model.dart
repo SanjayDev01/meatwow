@@ -1,10 +1,10 @@
 class SignUpResponse {
-  final String msg;
-  final String otpId;
+  final bool msg;
+  String otpId;
 
   SignUpResponse({
-    required this.msg,
-    required this.otpId,
+    this.msg,
+    this.otpId,
   });
 
   factory SignUpResponse.fromJson(Map<String, dynamic> json) {
@@ -22,10 +22,10 @@ class SignUpRequest {
   String password;
 
   SignUpRequest({
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.password,
+    this.name,
+    this.email,
+    this.phoneNumber,
+    this.password,
   });
 
   Map<String, dynamic> toJson() {

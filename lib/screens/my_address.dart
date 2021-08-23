@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyAddress extends StatefulWidget {
-  const MyAddress({Key? key}) : super(key: key);
+  const MyAddress({Key key}) : super(key: key);
 
   @override
   _MyAddressState createState() => _MyAddressState();

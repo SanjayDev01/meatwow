@@ -187,7 +187,7 @@ class _ProductCategoryState extends State<ProductCategory> {
                             padding: const EdgeInsets.fromLTRB(18, 18, 0, 0),
                             child: IconButton(
                               onPressed: () {
-                                scaffoldKey.currentState!.openDrawer();
+                                scaffoldKey.currentState.openDrawer();
                               },
                               icon: Icon(
                                 Icons.menu,

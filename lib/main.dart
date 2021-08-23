@@ -10,7 +10,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       title: "MeatWOW",
       builder: (context, widget) => ResponsiveWrapper.builder(
-        BouncingScrollWrapper.builder(context, widget!),
+        BouncingScrollWrapper.builder(context, widget),
         maxWidth: 1200,
         minWidth: 450,
         defaultScale: true,

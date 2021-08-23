@@ -1,23 +1,42 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
+import 'package:http/http.dart' as http;
+
 import 'login_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({Key? key}) : super(key: key);
+  final String otpId;
+  final String phoneNumber;
+  const OTPScreen({
+    Key key,
+    this.otpId,
+    this.phoneNumber,
+  }) : super(key: key);
 
   @override
-  _OTPScreenState createState() => _OTPScreenState();
+  _OTPScreenState createState() => _OTPScreenState(
+        otpId: otpId,
+        phoneNumber: phoneNumber,
+      );
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  final String otpId;
+  final String phoneNumber;
+  String otpPin;
+  _OTPScreenState({
+    this.otpId,
+    this.phoneNumber,
+  });
   TextEditingController textEditingController = TextEditingController();
 
   // ignore: close_sinks
-  StreamController<ErrorAnimationType>? errorController;
+  StreamController<ErrorAnimationType> errorController;
 
   bool hasError = false;
   String currentText = "";
@@ -31,9 +50,45 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void dispose() {
-    errorController!.close();
+    errorController.close();
 
     super.dispose();
+  }
+
+  signUp(String otpId, String otpPin, String phoneNumber) async {
+    Map data = {
+      "phoneNumber": phoneNumber,
+      "otp": otpPin,
+      "otpId": otpId,
+    };
+
+    // ignore: avoid_init_to_null
+    var jsonData = null;
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    Uri uri = Uri.http('localhost:5000', '/auth/check-otp-and-signin');
+
+    var response = await http.post(
+      uri,
+      body: jsonEncode(data),
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg"
+      },
+    );
+
+    if (response.body.isNotEmpty) {
+      jsonData = json.decode(response.body);
+    }
+
+    setState(() {
+      sharedPreferences.setString("name", jsonData['name']);
+    });
+    if (sharedPreferences.getString("name") != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    }
+    print(response.body);
   }
 
   @override
@@ -82,7 +137,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             ),
                             children: [
                               TextSpan(
-                                  text: "+91-9022900345",
+                                  text: "+91-$phoneNumber",
                                   style: TextStyle(
                                     fontFamily: "Mulish",
                                     fontSize: 14,
@@ -126,6 +181,11 @@ class _OTPScreenState extends State<OTPScreen> {
                             color: Colors.white,
                           ),
                           cursorWidth: 2.0,
+                          onSaved: (input) {
+                            setState(() {
+                              otpPin = input;
+                            });
+                          },
                           cursorHeight: 20,
                           boxShadows: [
                             BoxShadow(
@@ -183,10 +243,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       height: 37.66,
                       child: FlatButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()));
+                          signUp(otpId, otpPin, phoneNumber);
                         },
                         child: Text(
                           "Verify",

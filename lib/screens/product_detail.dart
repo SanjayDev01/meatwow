@@ -8,7 +8,7 @@ import 'home_screen.dart';
 import 'my_account.dart';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail({Key? key}) : super(key: key);
+  const ProductDetail({Key key}) : super(key: key);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -192,7 +192,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                     const EdgeInsets.fromLTRB(18, 18, 0, 0),
                                 child: IconButton(
                                   onPressed: () {
-                                    scaffoldKey.currentState!.openDrawer();
+                                    scaffoldKey.currentState.openDrawer();
                                   },
                                   icon: Icon(
                                     Icons.menu,

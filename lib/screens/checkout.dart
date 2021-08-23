@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meatwow/screens/order_success.dart';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key? key}) : super(key: key);
+  const CheckoutPage({Key key}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();

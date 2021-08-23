@@ -3,7 +3,7 @@ import 'package:meatwow/screens/my_address.dart';
 import 'package:meatwow/screens/my_orders.dart';
 
 class MyAccount extends StatefulWidget {
-  const MyAccount({Key? key}) : super(key: key);
+  const MyAccount({Key key}) : super(key: key);
 
   @override
   _MyAccountState createState() => _MyAccountState();
