@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:meatwow/screens/product_category.dart';
 
 import 'cart_page.dart';
+import 'home_screen.dart';
+import 'my_account.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({Key? key}) : super(key: key);
@@ -15,10 +17,152 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   final String assetName = 'assets/images/Sticky-chicken-category.svg';
   final String assetName1 = 'assets/images/Sticky-eggs-category.svg';
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 74,
+                ),
+                Image.asset(
+                  "assets/images/meat-wow-logo.png",
+                  width: 112.44,
+                  height: 30.04,
+                ),
+                SizedBox(
+                  height: 70,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24),
+                        child: Icon(
+                          Icons.home,
+                          color: Color.fromRGBO(
+                            163,
+                            18,
+                            28,
+                            1,
+                          ),
+                          size: 25,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30),
+                        child: Text(
+                          "Home",
+                          style: TextStyle(
+                            fontFamily: "Mulish",
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(163, 18, 28, 1),
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: Icon(
+                        Icons.toc,
+                        color: Color.fromRGBO(
+                          163,
+                          18,
+                          28,
+                          1,
+                        ),
+                        size: 25,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30),
+                      child: Text(
+                        "Categories",
+                        style: TextStyle(
+                          fontFamily: "Mulish",
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromRGBO(163, 18, 28, 1),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 90),
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Color.fromRGBO(
+                          175,
+                          175,
+                          175,
+                          1,
+                        ),
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyAccount()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24),
+                        child: Icon(
+                          Icons.person,
+                          color: Color.fromRGBO(
+                            163,
+                            18,
+                            28,
+                            1,
+                          ),
+                          size: 25,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30),
+                        child: Text(
+                          "My Account",
+                          style: TextStyle(
+                            fontFamily: "Mulish",
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(163, 18, 28, 1),
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+      ),
+      key: scaffoldKey,
       body: SafeArea(
         child: Container(
           color: Color.fromRGBO(255, 255, 255, 1),
@@ -47,7 +191,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 padding:
                                     const EdgeInsets.fromLTRB(18, 18, 0, 0),
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    scaffoldKey.currentState!.openDrawer();
+                                  },
                                   icon: Icon(
                                     Icons.menu,
                                     size: 24,

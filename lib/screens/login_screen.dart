@@ -74,22 +74,24 @@ class LoginScreen extends StatelessWidget {
                     36.84,
                     0,
                   ),
-                  child: CupertinoTextField(
-                    placeholder: "Phone",
-                    placeholderStyle: TextStyle(
-                      fontSize: 15,
-                      color: Color.fromRGBO(175, 175, 175, 1),
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Mulish",
+                  child: Container(
+                    height: 42,
+                    width: MediaQuery.of(context).size.width,
+                    child: TextFormField(
+                      textAlign: TextAlign.left,
+                      keyboardType: TextInputType.phone,
+                      textAlignVertical: TextAlignVertical.bottom,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          prefix: Text("    "),
+                          hintText: "Phone",
+                          hintStyle: TextStyle(
+                            fontFamily: "Mulish",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(175, 175, 175, 1),
+                          )),
                     ),
-                    style: TextStyle(
-                      fontSize: 11.72,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Mulish",
-                    ),
-                    keyboardType: TextInputType.phone,
-                    padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
                 Padding(
@@ -117,22 +119,25 @@ class LoginScreen extends StatelessWidget {
                     36.84,
                     0,
                   ),
-                  child: CupertinoTextField(
-                    placeholder: "Password",
-                    placeholderStyle: TextStyle(
-                      fontSize: 15,
-                      color: Color.fromRGBO(175, 175, 175, 1),
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Mulish",
+                  child: Container(
+                    height: 42,
+                    width: MediaQuery.of(context).size.width,
+                    child: TextFormField(
+                      textAlign: TextAlign.left,
+                      textAlignVertical: TextAlignVertical.bottom,
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          prefix: Text("    "),
+                          hintText: "Password",
+                          hintStyle: TextStyle(
+                            fontFamily: "Mulish",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(175, 175, 175, 1),
+                          )),
                     ),
-                    style: TextStyle(
-                      fontSize: 11.72,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Mulish",
-                    ),
-                    keyboardType: TextInputType.text,
-                    padding: EdgeInsets.fromLTRB(21.76, 10.04, 209.25, 12.55),
                   ),
                 ),
                 Padding(
