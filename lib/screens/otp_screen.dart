@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:meatwow/models/verify.dart';
+import 'package:meatwow/services/verify_api_service.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,9 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   final String otpId;
   final String phoneNumber;
+  VerifyRequest verifyRequest;
+  bool msg;
+
   String otpPin;
   _OTPScreenState({
     this.otpId,
@@ -45,6 +50,7 @@ class _OTPScreenState extends State<OTPScreen> {
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
     super.initState();
+    verifyRequest = VerifyRequest();
   }
 
   @override
@@ -54,40 +60,70 @@ class _OTPScreenState extends State<OTPScreen> {
     super.dispose();
   }
 
-  signUp(String otpId, String otpPin, String phoneNumber) async {
-    Map data = {
-      "phoneNumber": phoneNumber,
-      "otp": otpPin,
-      "otpId": otpId,
-    };
+  // signUp(String otpId, String otpPin, String phoneNumber) async {
+  //   Map data = {
+  //     "phoneNumber": phoneNumber,
+  //     "otp": otpPin,
+  //     "otpId": otpId,
+  //   };
 
-    // ignore: avoid_init_to_null
-    var jsonData = null;
+  //   var jsonData = null;
 
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Uri uri = Uri.http('localhost:5000', '/auth/check-otp-and-signin');
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   Uri uri = Uri.http('localhost:5000', '/auth/check-otp-and-signin');
 
-    var response = await http.post(
-      uri,
-      body: jsonEncode(data),
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg"
-      },
-    );
+  //   var response = await http.post(
+  //     uri,
+  //     body: jsonEncode(data),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg"
+  //     },
+  //   );
 
-    if (response.body.isNotEmpty) {
-      jsonData = json.decode(response.body);
-    }
+  //   if (response.body.isNotEmpty) {
+  //     jsonData = json.decode(response.body);
+  //     print(jsonData.toString());
+  //     setState(() {
+  //       sharedPreferences.setString("username", jsonData["username"]);
+  //     });
+  //     if (sharedPreferences.getString("username") != null) {
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  //     } else {
+  //       print(response.body);
+  //     }
+  //   } else {
+  //     print("response is empty Failed");
+  //   }
+  // }
 
-    setState(() {
-      sharedPreferences.setString("name", jsonData['name']);
+  apiCall1() {
+    VerifyAPIService apiService1 = VerifyAPIService();
+    apiService1.signUp(verifyRequest).then((value) {
+      if (value.msg) {
+        print(value.msg);
+
+        setState(() {
+          msg = value.msg;
+          msg
+              ? Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()))
+              : Text("");
+        });
+      } else {
+        print(value);
+      }
     });
-    if (sharedPreferences.getString("name") != null) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  }
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
     }
-    print(response.body);
+    return false;
   }
 
   @override
@@ -175,6 +211,8 @@ class _OTPScreenState extends State<OTPScreen> {
                           errorAnimationController: errorController,
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
+                          //validator: (input) =>
+                          //    input.length = 6 ? "OTP is invalid" : null,
                           cursorColor: Colors.white,
                           textStyle: TextStyle(
                             color: Colors.white,
@@ -182,7 +220,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           cursorWidth: 2.0,
                           onSaved: (input) {
                             setState(() {
-                              otpPin = input;
+                              verifyRequest.otp = input;
                             });
                           },
                           cursorHeight: 20,
@@ -196,7 +234,10 @@ class _OTPScreenState extends State<OTPScreen> {
                           length: 6,
                           onChanged: (value) {
                             setState(() {
-                              currentText = value;
+                              verifyRequest.otp = value;
+                              otpPin = value;
+                              verifyRequest.otpId = otpId;
+                              verifyRequest.phoneNumber = phoneNumber;
                             });
                           }),
                     ),
@@ -242,7 +283,11 @@ class _OTPScreenState extends State<OTPScreen> {
                       height: 37.66,
                       child: FlatButton(
                         onPressed: () {
-                          signUp(otpId, otpPin, phoneNumber);
+                          //signUp(otpId, otpPin, phoneNumber);
+                          print(otpId);
+                          print(phoneNumber);
+                          print(otpPin);
+                          apiCall1();
                         },
                         child: Text(
                           "Verify",

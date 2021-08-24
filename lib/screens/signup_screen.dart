@@ -37,11 +37,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (value.otpId.isNotEmpty) {
         print(value.otpId);
 
-        setState(() {
-          otpId = value.otpId;
-        });
-      } else {
-        print("No OTP Id");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OTPScreen(
+                      otpId: value.otpId,
+                      phoneNumber: _phoneController.text,
+                    )));
+      } else if (value.otpId.isEmpty) {
+        print("no otpid");
       }
     });
   }
@@ -56,9 +60,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Form(
             key: globalFormKey,
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                //crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
@@ -306,13 +310,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           if (validateAndSave()) {
                             print(signUpRequest.toJson());
                             apiCall();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OTPScreen(
-                                          otpId: otpId,
-                                          phoneNumber: _phoneController.text,
-                                        )));
                           } else {
                             print("Authentication Failed");
                           }
