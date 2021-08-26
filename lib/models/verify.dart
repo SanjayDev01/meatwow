@@ -15,6 +15,11 @@ class VerifyResponse {
       user: User.fromJson(parsedJson['user']),
     );
   }
+
+  @override
+  String toString() {
+    return '"msg": $msg,"user" : {${user.toString()},';
+  }
 }
 
 class VerifyRequest {

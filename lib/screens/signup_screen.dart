@@ -308,7 +308,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: FlatButton(
                         onPressed: () {
                           if (validateAndSave()) {
-                            print(signUpRequest.toJson());
+                            // print(signUpRequest.toJson());
                             apiCall();
                           } else {
                             print("Authentication Failed");

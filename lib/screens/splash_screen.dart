@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:meatwow/models/user.dart';
+import 'package:meatwow/screens/home_screen.dart';
+import 'package:meatwow/screens/login_screen.dart';
 import 'package:meatwow/screens/signup_screen.dart';
 import 'dart:async';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -8,13 +16,42 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
+  bool firstLogin = true;
+
+  getUserInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> userMap;
+    final String userStr = prefs.getString('user');
+    if (userStr != null) {
+      print(userStr);
+      userMap = JwtDecoder.decode(userStr);
+      print(userMap);
+    }
+
+    if (userMap != null) {
+      final User user = User.fromJson(userMap);
+      setState(() {
+        firstLogin = false;
+      });
+      print(user);
+    }
     Timer(
-        Duration(seconds: 5),
-        () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignUpScreen())));
+        Duration(seconds: 2),
+        () => Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) {
+              return firstLogin ? SignUpScreen() : LoginScreen();
+            })));
+  }
+
+  @override
+  initState() {
+    super.initState();
+    getUserInfo();
+    // Timer(
+    //     Duration(seconds: 2),
+    //     () => Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => SignUpScreen())));
   }
 
   @override

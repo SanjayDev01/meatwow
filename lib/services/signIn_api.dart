@@ -1,16 +1,17 @@
 import 'package:http/http.dart' as http;
+import 'package:meatwow/models/signIn_model.dart';
 import 'package:meatwow/models/verify.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class VerifyAPIService {
-  Future<VerifyResponse> signUp(VerifyRequest verifyRequest) async {
-    Uri uri = Uri.http('localhost:5000', '/auth/check-otp-and-signin');
+class SignInAPIService {
+  Future<VerifyResponse> signIn(SignInRequest signInRequest) async {
+    Uri uri = Uri.http('localhost:5000', '/auth/signin-phone');
 
     final response = await http.post(
       uri,
-      body: jsonEncode(verifyRequest),
+      body: json.encode(signInRequest),
       headers: {
         "Content-Type": "application/json",
         "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg"

@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:meatwow/models/user.dart';
 import 'package:meatwow/models/verify.dart';
 import 'package:meatwow/services/verify_api_service.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'home_screen.dart';
 import 'login_screen.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -100,17 +102,26 @@ class _OTPScreenState extends State<OTPScreen> {
 
   apiCall1() {
     VerifyAPIService apiService1 = VerifyAPIService();
-    apiService1.signUp(verifyRequest).then((value) {
+
+    apiService1.signUp(verifyRequest).then((value) async {
       if (value.msg) {
-        print(value.msg);
+        //print(value.msg);
 
         setState(() {
           msg = value.msg;
           msg
               ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()))
+                  MaterialPageRoute(builder: (context) => HomeScreen()))
               : Text("");
         });
+
+        final data = value.user as User;
+
+        // print(data.isPhoneVerified);
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // bool result =
+        //     await prefs.setString('user', json.encode(data.toString()));
+        // print(result);
       } else {
         print(value);
       }
