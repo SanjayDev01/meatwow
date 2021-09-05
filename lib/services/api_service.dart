@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class APIService {
   Future<SignUpResponse> signUp(SignUpRequest signUpRequest) async {
-    Uri uri = Uri.http('localhost:5000', '/auth/signup-phone');
+    Uri uri = Uri.http('192.168.0.3:5000', '/auth/signup-phone');
 
     final response = await http.post(
       uri,

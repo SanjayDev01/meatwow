@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meatwow/models/signIn_model.dart';
 import 'package:meatwow/models/user.dart';
+import 'package:meatwow/screens/signup_screen.dart';
 import 'package:meatwow/services/signIn_api.dart';
 
 import 'home_screen.dart';
@@ -255,6 +256,40 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account?",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    SignUpScreen())),
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                              color: Color.fromRGBO(
+                                163,
+                                18,
+                                28,
+                                1,
+                              ),
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),

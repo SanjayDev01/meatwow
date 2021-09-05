@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class VerifyAPIService {
   Future<VerifyResponse> signUp(VerifyRequest verifyRequest) async {
-    Uri uri = Uri.http('localhost:5000', '/auth/check-otp-and-signin');
+    Uri uri = Uri.http('192.168.0.3:5000', '/auth/check-otp-and-signin');
 
     final response = await http.post(
       uri,

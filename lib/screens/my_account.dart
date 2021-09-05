@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:meatwow/screens/login_screen.dart';
 import 'package:meatwow/screens/my_address.dart';
 import 'package:meatwow/screens/my_orders.dart';
+import 'package:meatwow/screens/splash_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key key}) : super(key: key);
@@ -10,6 +13,14 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
+  void _handleSignOut(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('user');
+    // prefs.remove("c_access_token");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,7 +256,7 @@ class _MyAccountState extends State<MyAccount> {
                 Padding(
                   padding: const EdgeInsets.only(left: 30),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () => _handleSignOut(context),
                     child: Text(
                       "Sign out",
                       style: TextStyle(

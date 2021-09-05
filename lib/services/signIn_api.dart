@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInAPIService {
   Future<VerifyResponse> signIn(SignInRequest signInRequest) async {
-    Uri uri = Uri.http('localhost:5000', '/auth/signin-phone');
+    Uri uri = Uri.http('192.168.0.3:5000', '/auth/signin-phone');
 
     final response = await http.post(
       uri,

@@ -4,6 +4,8 @@ import 'package:meatwow/models/signup_model.dart';
 import 'package:meatwow/screens/otp_screen.dart';
 import 'package:meatwow/services/api_service.dart';
 
+import 'login_screen.dart';
+
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -339,6 +341,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Already have an account?",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    LoginScreen())),
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                              color: Color.fromRGBO(
+                                163,
+                                18,
+                                28,
+                                1,
+                              ),
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(height: 47.24),
                   Padding(
