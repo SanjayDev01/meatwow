@@ -111,9 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
         var y = z.products as Product;
         var x = y.productVariant as ProductVariant;
         print(x.sellPrice);
-        setState(() {
-          productsFetched = true;
-        });
+        if (x.sellPrice != null) {
+          setState(() {
+            productsFetched = true;
+          });
+        }
       }
     } else if (resShop.body == null) {
       print("UnSuccess");
@@ -137,9 +139,12 @@ class _HomeScreenState extends State<HomeScreen> {
       var y = z.products as Product;
       var x = y.productVariant as ProductVariant;
       print(x.sellPrice);
-      setState(() {
-        productsFetched = true;
-      });
+      //int a = x.sellPrice;
+      if (x.sellPrice != null) {
+        setState(() {
+          productsFetched = true;
+        });
+      }
     }
   }
 
