@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:meatwow/screens/splash_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

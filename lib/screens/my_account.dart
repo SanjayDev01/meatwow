@@ -15,8 +15,8 @@ class MyAccount extends StatefulWidget {
 class _MyAccountState extends State<MyAccount> {
   void _handleSignOut(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('user');
-    // prefs.remove("c_access_token");
+    prefs.remove("c_refToken");
+    prefs.remove("c_access_token");
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }

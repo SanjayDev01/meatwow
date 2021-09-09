@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:meatwow/models/user.dart';
 import 'package:meatwow/screens/home_screen.dart';
@@ -22,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, dynamic> userMap;
-    final String userStr = prefs.getString('user');
+    final String userStr = prefs.getString('c_access_token');
     if (userStr != null) {
       print(userStr);
       userMap = JwtDecoder.decode(userStr);
@@ -30,14 +29,13 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (userMap != null) {
-      final User user = User.fromJson(userMap);
+      //final User user = User.fromJson(userMap);
       setState(() {
         firstLogin = false;
       });
-      print(user);
     }
     Timer(
-        Duration(seconds: 2),
+        Duration(seconds: 3),
         () => Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
               return firstLogin ? LoginScreen() : HomeScreen();
@@ -80,6 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontStyle: FontStyle.normal,
                 ),
               ),
+              //Text("$longitude & $latitude"),
               SizedBox(
                 height: 333,
               ),

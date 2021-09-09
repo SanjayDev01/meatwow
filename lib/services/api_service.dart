@@ -1,10 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:meatwow/config/uri.dart';
 import 'package:meatwow/models/signup_model.dart';
 import 'dart:convert';
 
 class APIService {
   Future<SignUpResponse> signUp(SignUpRequest signUpRequest) async {
-    Uri uri = Uri.http('192.168.0.3:5000', '/auth/signup-phone');
+    String apiUrl = Ur().uri;
+
+    Uri uri = Uri.http('$apiUrl', '/auth/signup-phone');
 
     final response = await http.post(
       uri,

@@ -1,12 +1,16 @@
 import 'package:http/http.dart' as http;
+import 'package:meatwow/config/uri.dart';
 import 'package:meatwow/models/verify.dart';
+import 'package:meatwow/shared/token.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VerifyAPIService {
   Future<VerifyResponse> signUp(VerifyRequest verifyRequest) async {
-    Uri uri = Uri.http('192.168.0.3:5000', '/auth/check-otp-and-signin');
+    String apiUrl = Ur().uri;
+
+    Uri uri = Uri.http('$apiUrl', '/auth/check-otp-and-signin');
 
     final response = await http.post(
       uri,
@@ -25,12 +29,25 @@ class VerifyAPIService {
       headers.substring(idx + 1).trim(),
       headers.substring(idx + 2).trim()
     ];
-    //print(parts[2]);
+    print(parts[2]);
+    print(parts[0]);
 
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    bool result = await sharedPreferences.setString('user', parts[2]);
-    print(result);
-    print(json.encode(parts[2]));
+    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // bool result = await sharedPreferences.setString('user', parts[2]);
+    // print(result);
+    // print(json.encode(parts[2]));
+    print(headers);
+    if (headers != null) {
+      // Map tokens = TokenHelper.getTokens(headers);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (headers != null) {
+        //  Map tokens = TokenHelper.getTokens(headers);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("c_refToken", parts[0]);
+        prefs.setString("c_access_token", parts[2]);
+        // print(tokens);
+      }
+    }
 
     if (response.body.isNotEmpty) {
       return VerifyResponse.fromJson(json.decode(response.body));

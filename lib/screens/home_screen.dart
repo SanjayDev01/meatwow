@@ -1,9 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as htt;
+import 'package:meatwow/config/uri.dart';
+import 'package:meatwow/models/productsResponse.dart';
+import 'package:meatwow/models/shops.dart';
 import 'package:meatwow/screens/cart_page.dart';
 import 'package:meatwow/screens/my_account.dart';
 import 'package:meatwow/screens/product_category.dart';
+import 'package:meatwow/screens/product_detail.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String ab = "acc";
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,6 +26,122 @@ class _HomeScreenState extends State<HomeScreen> {
   final String assetName = 'assets/images/Sticky-chicken-category.svg';
   final String assetName1 = 'assets/images/Sticky-eggs-category.svg';
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool productsFetched = false;
+  bool gotLocation = false;
+  double longitude;
+  double latitude;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation();
+    gotLocation ? getProducts() : getAllProducts();
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print(
+          "Location permissions are permanently denied, we cannot request permissions.");
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+  }
+
+  getUserLocation() async {
+    Position position = await _determinePosition();
+    setState(() {
+      latitude = position.latitude;
+      longitude = position.longitude;
+      gotLocation = true;
+    });
+
+    print("$latitude & $longitude");
+  }
+
+  String apiUrl = Ur().uri;
+
+  getProducts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+    Uri uri = Uri.http('$apiUrl',
+        '/shops/find/shop-location?coordinates=$longitude,$latitude');
+    print(uri);
+    print("$refToken;$token");
+
+    var resShop = await htt.get(uri, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resShop.body != null) {
+      // print(resShop.body);
+      var z = ShopResponse.fromJson(json.decode(resShop.body));
+      var y = z.shop as Shop;
+      var shopId = y.id;
+      print(y.id);
+      Uri ur = Uri.http('$apiUrl',
+          '/products?limit=10&offset=0&forAdmin=true&shopId=$shopId');
+      var resPro = await htt.get(ur, headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+        "Cookie": "$refToken;$token",
+      });
+
+      if (resPro.body != null) {
+        var z = ProductResponse.fromJson(json.decode(resPro.body));
+        var y = z.products as Product;
+        var x = y.productVariant as ProductVariant;
+        print(x.sellPrice);
+        setState(() {
+          productsFetched = true;
+        });
+      }
+    } else if (resShop.body == null) {
+      print("UnSuccess");
+    }
+  }
+
+  getAllProducts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.http('$apiUrl', 'products?limit=10&offset=0&forAdmin=false');
+    var resProAll = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resProAll.body != null) {
+      var z = ProductResponse.fromJson(json.decode(resProAll.body));
+      var y = z.products as Product;
+      var x = y.productVariant as ProductVariant;
+      print(x.sellPrice);
+      setState(() {
+        productsFetched = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -548,407 +676,458 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: 1,
                         ),
-                        Container(
-                          height: 353,
-                          //width: 224.9,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 23.71,
-                                ),
-                                child: Card(
-                                  child: Container(
-                                    width: 247.9,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(3.21),
-                                    ),
-                                    height: 353.7,
-                                    child: Column(
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/Product-image.png",
-                                          scale: 0.5,
-                                          //width: 257,
-                                          //height: 239,
+                        productsFetched
+                            ? Container(
+                                height: 353,
+                                //width: 224.9,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProductDetail()));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 23.71,
                                         ),
-                                        Container(
-                                          height: 104,
-                                          width: 247.9,
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 12,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                        child: Card(
+                                          child: Container(
+                                            width: 247.9,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(3.21),
+                                            ),
+                                            height: 353.7,
+                                            child: Column(
+                                              children: [
+                                                Image.asset(
+                                                  "assets/images/Product-image.png",
+                                                  scale: 0.5,
+                                                  //width: 257,
+                                                  //height: 239,
+                                                ),
+                                                Container(
+                                                  height: 104,
+                                                  width: 247.9,
+                                                  child: Column(
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 13),
-                                                        child: Text(
-                                                          "Chicken Breast",
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                53,
-                                                                53,
-                                                                53,
-                                                                1,
-                                                              )),
-                                                        ),
+                                                      SizedBox(
+                                                        height: 12,
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 13),
-                                                        child: Text(
-                                                          "Boneless",
-                                                          style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                117,
-                                                                116,
-                                                                116,
-                                                                1,
-                                                              )),
-                                                        ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            13),
+                                                                child: Text(
+                                                                  "Chicken Breast",
+                                                                  style: TextStyle(
+                                                                      fontSize: 15,
+                                                                      fontFamily: "Mulish",
+                                                                      fontWeight: FontWeight.w700,
+                                                                      color: Color.fromRGBO(
+                                                                        53,
+                                                                        53,
+                                                                        53,
+                                                                        1,
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            13),
+                                                                child: Text(
+                                                                  "Boneless",
+                                                                  style: TextStyle(
+                                                                      fontSize: 11,
+                                                                      fontFamily: "Mulish",
+                                                                      fontWeight: FontWeight.w400,
+                                                                      color: Color.fromRGBO(
+                                                                        117,
+                                                                        116,
+                                                                        116,
+                                                                        1,
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              right: 11,
+                                                            ),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {},
+                                                              child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                    163,
+                                                                    18,
+                                                                    28,
+                                                                    1,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              1.92),
+                                                                ),
+                                                                width: 105,
+                                                                height: 30,
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            18,
+                                                                            7,
+                                                                            17,
+                                                                            6),
+                                                                child: Text(
+                                                                  "Add To Cart",
+                                                                  style: TextStyle(
+                                                                      fontFamily: "Mulish",
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontSize: 12,
+                                                                      color: Color.fromRGBO(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        1,
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
+                                                      SizedBox(
+                                                        height: 19.64,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 13,
+                                                            ),
+                                                            child: Text(
+                                                              "Net Wet: 500gm",
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    "Mulish",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                  53,
+                                                                  53,
+                                                                  53,
+                                                                  1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 20.4,
+                                                            ),
+                                                            child: Text(
+                                                              "MRP: \u{20B9}${245}",
+                                                              style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontFamily:
+                                                                    "Mulish",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                  163,
+                                                                  18,
+                                                                  28,
+                                                                  1,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
                                                     ],
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      right: 11,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          elevation: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 23.71,
+                                      ),
+                                      child: Card(
+                                        child: Container(
+                                          width: 247.9,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(3.21),
+                                          ),
+                                          height: 353.7,
+                                          child: Column(
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/Product-image.png",
+                                                scale: 0.5,
+                                                //width: 257,
+                                                //height: 239,
+                                              ),
+                                              Container(
+                                                height: 104,
+                                                width: 247.9,
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 12,
                                                     ),
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Color.fromRGBO(
-                                                            163,
-                                                            18,
-                                                            28,
-                                                            1,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      1.92),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 13),
+                                                              child: Text(
+                                                                "Chicken Breast",
+                                                                style:
+                                                                    TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontFamily:
+                                                                            "Mulish",
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w700,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                          53,
+                                                                          53,
+                                                                          53,
+                                                                          1,
+                                                                        )),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 13),
+                                                              child: Text(
+                                                                "Boneless",
+                                                                style:
+                                                                    TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                        fontFamily:
+                                                                            "Mulish",
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                          117,
+                                                                          116,
+                                                                          116,
+                                                                          1,
+                                                                        )),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        width: 105,
-                                                        height: 30,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                18, 7, 17, 6),
-                                                        child: Text(
-                                                          "Add To Cart",
-                                                          style: TextStyle(
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            right: 11,
+                                                          ),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                  163,
+                                                                  18,
+                                                                  28,
+                                                                  1,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            1.92),
+                                                              ),
+                                                              width: 105,
+                                                              height: 30,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          18,
+                                                                          7,
+                                                                          17,
+                                                                          6),
+                                                              child: Text(
+                                                                "Add To Cart",
+                                                                style:
+                                                                    TextStyle(
+                                                                        fontFamily:
+                                                                            "Mulish",
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w700,
+                                                                        fontSize:
+                                                                            12,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          1,
+                                                                        )),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 19.64,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 13,
+                                                          ),
+                                                          child: Text(
+                                                            "Net Wet: 500gm",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
                                                               fontFamily:
                                                                   "Mulish",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
-                                                              fontSize: 12,
                                                               color: Color
                                                                   .fromRGBO(
-                                                                255,
-                                                                255,
-                                                                255,
+                                                                53,
+                                                                53,
+                                                                53,
                                                                 1,
-                                                              )),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 19.64,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 13,
-                                                    ),
-                                                    child: Text(
-                                                      "Net Wet: 500gm",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontFamily: "Mulish",
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: Color.fromRGBO(
-                                                          53,
-                                                          53,
-                                                          53,
-                                                          1,
+                                                        SizedBox(
+                                                          width: 20,
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 20.4,
-                                                    ),
-                                                    child: Text(
-                                                      "MRP: \u{20B9}${245}",
-                                                      style: TextStyle(
-                                                        fontSize: 17,
-                                                        fontFamily: "Mulish",
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: Color.fromRGBO(
-                                                          163,
-                                                          18,
-                                                          28,
-                                                          1,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 20.4,
+                                                          ),
+                                                          child: Text(
+                                                            "MRP: \u{20B9}${245}",
+                                                            style: TextStyle(
+                                                              fontSize: 17,
+                                                              fontFamily:
+                                                                  "Mulish",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                163,
+                                                                18,
+                                                                28,
+                                                                1,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
                                               )
                                             ],
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  elevation: 3.0,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 23.71,
-                                ),
-                                child: Card(
-                                  child: Container(
-                                    width: 247.9,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(3.21),
-                                    ),
-                                    height: 353.7,
-                                    child: Column(
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/Product-image.png",
-                                          scale: 0.5,
-                                          //width: 257,
-                                          //height: 239,
                                         ),
-                                        Container(
-                                          height: 104,
-                                          width: 247.9,
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 12,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 13),
-                                                        child: Text(
-                                                          "Chicken Breast",
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                53,
-                                                                53,
-                                                                53,
-                                                                1,
-                                                              )),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 13),
-                                                        child: Text(
-                                                          "Boneless",
-                                                          style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                117,
-                                                                116,
-                                                                116,
-                                                                1,
-                                                              )),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      right: 11,
-                                                    ),
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Color.fromRGBO(
-                                                            163,
-                                                            18,
-                                                            28,
-                                                            1,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      1.92),
-                                                        ),
-                                                        width: 105,
-                                                        height: 30,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                18, 7, 17, 6),
-                                                        child: Text(
-                                                          "Add To Cart",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: 12,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                255,
-                                                                255,
-                                                                255,
-                                                                1,
-                                                              )),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 19.64,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 13,
-                                                    ),
-                                                    child: Text(
-                                                      "Net Wet: 500gm",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontFamily: "Mulish",
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: Color.fromRGBO(
-                                                          53,
-                                                          53,
-                                                          53,
-                                                          1,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 20.4,
-                                                    ),
-                                                    child: Text(
-                                                      "MRP: \u{20B9}${245}",
-                                                      style: TextStyle(
-                                                        fontSize: 17,
-                                                        fontFamily: "Mulish",
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: Color.fromRGBO(
-                                                          163,
-                                                          18,
-                                                          28,
-                                                          1,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                        elevation: 3.0,
+                                      ),
                                     ),
-                                  ),
-                                  elevation: 3.0,
+                                  ],
                                 ),
+                              )
+                            : LinearProgressIndicator(
+                                minHeight: 6,
+                                backgroundColor: Colors.white,
+                                color: Color.fromRGBO(163, 18, 28, 1),
                               ),
-                            ],
-                          ),
-                        ),
                         SizedBox(
                           height: 15,
                         ),
