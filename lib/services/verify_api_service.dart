@@ -39,7 +39,6 @@ class VerifyAPIService {
     print(headers);
     if (headers != null) {
       // Map tokens = TokenHelper.getTokens(headers);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       if (headers != null) {
         //  Map tokens = TokenHelper.getTokens(headers);
         SharedPreferences prefs = await SharedPreferences.getInstance();
