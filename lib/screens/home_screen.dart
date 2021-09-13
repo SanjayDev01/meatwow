@@ -8,6 +8,7 @@ import 'package:http/http.dart' as htt;
 import 'package:meatwow/config/uri.dart';
 import 'package:meatwow/models/productsResponse.dart';
 import 'package:meatwow/models/shops.dart';
+import 'package:meatwow/models/single_product.dart';
 import 'package:meatwow/screens/cart_page.dart';
 import 'package:meatwow/screens/my_account.dart';
 import 'package:meatwow/screens/product_category.dart';
@@ -35,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getUserLocation();
-    gotLocation ? getProducts() : getAllProducts();
   }
 
   Future<Position> _determinePosition() async {
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+        desiredAccuracy: LocationAccuracy.high);
   }
 
   getUserLocation() async {
@@ -69,24 +69,31 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
-      gotLocation = true;
+      if (latitude != null) {
+        gotLocation = true;
+      }
     });
 
-    print("$latitude & $longitude");
+    gotLocation ? getShop() : getAllProducts();
+
+    // print(gotLocation);
+    // getShop(longitude, latitude);
   }
 
-  String apiUrl = Ur().uri;
+  getShop() async {
+    String apiUrl = Ur().uri;
 
-  getProducts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String refToken = prefs.getString("c_refToken");
     String token = prefs.getString("c_access_token");
-    Uri uri = Uri.http('$apiUrl',
-        '/shops/find/shop-location?coordinates=$longitude,$latitude');
-    print(uri);
-    print("$refToken;$token");
+    // Uri uri = Uri.http('$apiUrl', '/shops/find/shop-location',
+    //     {"coordinates": "$longitude,$latitude"});
+    Uri ur1 = Uri.parse(
+        '$apiUrl/shops/find/shop-location?coordinates=$longitude,$latitude');
+    print(ur1);
+    //print("$refToken;$token");
 
-    var resShop = await htt.get(uri, headers: {
+    var resShop = await htt.get(ur1, headers: {
       "Content-Type": "application/json",
       "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
       "Cookie": "$refToken;$token",
@@ -95,39 +102,53 @@ class _HomeScreenState extends State<HomeScreen> {
     if (resShop.body != null) {
       // print(resShop.body);
       var z = ShopResponse.fromJson(json.decode(resShop.body));
-      var y = z.shop as Shop;
-      var shopId = y.id;
-      print(y.id);
-      Uri ur = Uri.http('$apiUrl',
-          '/products?limit=10&offset=0&forAdmin=true&shopId=$shopId');
-      var resPro = await htt.get(ur, headers: {
-        "Content-Type": "application/json",
-        "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
-        "Cookie": "$refToken;$token",
-      });
 
-      if (resPro.body != null) {
-        var z = ProductResponse.fromJson(json.decode(resPro.body));
-        var y = z.products as Product;
-        var x = y.productVariant as ProductVariant;
-        print(x.sellPrice);
-        if (x.sellPrice != null) {
-          setState(() {
-            productsFetched = true;
+      if (z.shop != null) {
+        var y = z.shop as Shop;
+        var shopId = y.id;
+        print(shopId);
+        Uri ur = Uri.parse(
+            '$apiUrl/products?limit=10&offset=0&forAdmin=false&shopId=$shopId');
+        //'/products/chicken-breast');
+        var resPro = await htt.get(ur, headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+          "Cookie": "$refToken;$token",
+        });
+
+        if (resPro.body != null) {
+          SingleProduct.fromJson(jsonDecode(resPro.body))
+              .products
+              .products
+              .forEach((element) {
+            var y = element.productVariant;
+            print(y.first.salePrice);
+            if (y.first.salePrice != null) {
+              setState(() {
+                productsFetched = true;
+              });
+            }
           });
+          // ignore: unnecessary_cast
+
         }
+      } else if (z.shop == null) {
+        print("shop is empty");
+        getAllProducts();
       }
-    } else if (resShop.body == null) {
-      print("UnSuccess");
+    } else {
+      print("shop is emptyyy");
     }
   }
 
   getAllProducts() async {
+    String apiUrl = Ur().uri;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String refToken = prefs.getString("c_refToken");
     String token = prefs.getString("c_access_token");
 
-    Uri ur = Uri.http('$apiUrl', 'products?limit=10&offset=0&forAdmin=false');
+    Uri ur = Uri.parse('$apiUrl/products?limit=10&offset=0&forAdmin=false');
     var resProAll = await htt.get(ur, headers: {
       "Content-Type": "application/json",
       "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
@@ -135,16 +156,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     if (resProAll.body != null) {
-      var z = ProductResponse.fromJson(json.decode(resProAll.body));
-      var y = z.products as Product;
-      var x = y.productVariant as ProductVariant;
-      print(x.sellPrice);
-      //int a = x.sellPrice;
-      if (x.sellPrice != null) {
-        setState(() {
-          productsFetched = true;
-        });
-      }
+      Product.fromJson(jsonDecode(resProAll.body)).products.forEach((element) {
+        var y = element.productVariant;
+        print(y.first.price);
+        if (y.first.price != null) {
+          setState(() {
+            productsFetched = true;
+          });
+        }
+      });
     }
   }
 

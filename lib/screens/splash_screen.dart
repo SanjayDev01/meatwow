@@ -9,6 +9,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+dynamic userObject;
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -25,7 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
     if (userStr != null) {
       print(userStr);
       userMap = JwtDecoder.decode(userStr);
-      print(userMap);
+      //  print(userMap["id"]);
+      userObject = userMap;
+      print(userObject["id"]);
     }
 
     if (userMap != null) {

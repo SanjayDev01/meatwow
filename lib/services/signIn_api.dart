@@ -9,8 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SignInAPIService {
   Future<VerifyResponse> signIn(SignInRequest signInRequest) async {
     String apiUrl = Ur().uri;
-
+    //print(apiUrl);
     Uri uri = Uri.http('$apiUrl', '/auth/signin-phone');
+    print(uri);
 
     final response = await http.post(
       uri,
@@ -31,12 +32,11 @@ class SignInAPIService {
     ];
     print(parts[2]);
     print(parts[0]);
-    //print(parts[0]);
 
-    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    // bool result = await sharedPreferences.setString('user', parts[2]);
-    // print(result);
-    // print(json.encode(parts[2]));
+    // // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // // bool result = await sharedPreferences.setString('user', parts[2]);
+    // // print(result);
+    // // print(json.encode(parts[2]));
 
     // print(headers);
     if (headers != null) {

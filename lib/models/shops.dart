@@ -9,9 +9,12 @@ class ShopResponse {
     //         Map<User> users = user.map((i) => User.fromJson(i));
 
     return ShopResponse(
-      msg: parsedJson['msg'],
-      shop: Shop.fromJson(parsedJson['shop']),
-    );
+        msg: parsedJson['msg'],
+        shop: parsedJson['shop'] == null
+            ? null
+            : Shop.fromJson(
+                parsedJson['shop'],
+              ));
   }
 }
 
