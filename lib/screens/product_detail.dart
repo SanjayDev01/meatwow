@@ -1,23 +1,72 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:meatwow/config/uri.dart';
+import 'package:http/http.dart' as htt;
+import 'package:meatwow/models/product_details.dart';
 import 'package:meatwow/screens/product_category.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'cart_page.dart';
 import 'home_screen.dart';
 import 'my_account.dart';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail({Key key}) : super(key: key);
+  const ProductDetail({this.slug});
+  final String slug;
 
   @override
-  _ProductDetailState createState() => _ProductDetailState();
+  _ProductDetailState createState() => _ProductDetailState(
+        slug: slug,
+      );
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  final String slug;
   final String assetName = 'assets/images/Sticky-chicken-category.svg';
   final String assetName1 = 'assets/images/Sticky-eggs-category.svg';
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isPieces = true;
+  bool isLoad = false;
+  ProductDetails productDet;
+  _ProductDetailState({this.slug});
+
+  @override
+  void initState() {
+    getProductDetails();
+    super.initState();
+  }
+
+  getProductDetails() async {
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.parse('$apiUrl/products/$slug');
+    var resProDetail = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resProDetail != null) {
+      var y = ProductDetails.fromJson(json.decode(resProDetail.body));
+
+      print(y.product.description);
+      setState(() {
+        productDet = y;
+        isPieces = productDet.product.isPieces;
+        isLoad = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -434,442 +483,484 @@ class _ProductDetailState extends State<ProductDetail> {
                         ],
                       ),
                     ),
-                    Image.asset(
-                      "assets/images/Product-image.png",
-                      width: MediaQuery.of(context).size.width,
-                      //scale: 0.2,
-                      fit: BoxFit.fill,
-                    ),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 22,
-                                top: 16,
+                    isLoad
+                        ? LinearProgressIndicator(
+                            minHeight: 6,
+                            backgroundColor: Colors.white,
+                            color: Color.fromRGBO(163, 18, 28, 1),
+                          )
+                        : Column(
+                            children: [
+                              Image.network(
+                                productDet.product.image,
+                                width: MediaQuery.of(context).size.width,
+                                //scale: 0.2,
+                                fit: BoxFit.fill,
                               ),
-                              child: Text(
-                                "Chicken Breast",
-                                style: TextStyle(
-                                  fontFamily: "Mulish",
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color.fromRGBO(
-                                    53,
-                                    53,
-                                    53,
-                                    1,
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 22,
+                                          top: 16,
+                                        ),
+                                        child: Text(
+                                          productDet.product.title,
+                                          style: TextStyle(
+                                            fontFamily: "Mulish",
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color.fromRGBO(
+                                              53,
+                                              53,
+                                              53,
+                                              1,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 22,
+                                          top: 1.05,
+                                        ),
+                                        child: Text(
+                                          "Boneless",
+                                          style: TextStyle(
+                                              fontFamily: "Mulish",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color.fromRGBO(
+                                                117,
+                                                116,
+                                                116,
+                                                1,
+                                              )),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 60, top: 16, right: 25),
+                                    child: Text(
+                                      "\u{20B9}${productDet.product.productVariant.first.salePrice}",
+                                      style: TextStyle(
+                                        fontSize: 24.31,
+                                        fontFamily: "Mulish",
+                                        fontWeight: FontWeight.w700,
+                                        color: Color.fromRGBO(
+                                          163,
+                                          18,
+                                          28,
+                                          1,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 0, top: 16, right: 25),
+                                    child: Text(
+                                      "\u{20B9}${productDet.product.productVariant.first.price}",
+                                      style: TextStyle(
+                                        fontSize: 24.31,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationStyle:
+                                            TextDecorationStyle.solid,
+                                        fontFamily: "Mulish",
+                                        fontWeight: FontWeight.w700,
+                                        color: Color.fromRGBO(
+                                          117,
+                                          116,
+                                          116,
+                                          1,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  22,
+                                  12.66,
+                                  25,
+                                  12.66,
+                                ),
+                                child: Center(
+                                  child: SizedBox(
+                                    height: 1.2,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.95,
+                                    child: Container(
+                                      color: Color.fromRGBO(
+                                        204,
+                                        204,
+                                        204,
+                                        1,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 22,
-                                top: 1.05,
-                              ),
-                              child: Text(
-                                "Boneless",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(
-                                      117,
-                                      116,
-                                      116,
-                                      1,
-                                    )),
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 190, top: 16, right: 25),
-                          child: Text(
-                            "\u{20B9}${219}",
-                            style: TextStyle(
-                              fontSize: 24.31,
-                              fontFamily: "Mulish",
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(
-                                163,
-                                18,
-                                28,
-                                1,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        22,
-                        12.66,
-                        25,
-                        12.66,
-                      ),
-                      child: Center(
-                        child: SizedBox(
-                          height: 1.2,
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          child: Container(
-                            color: Color.fromRGBO(
-                              204,
-                              204,
-                              204,
-                              1,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        22,
-                        0,
-                        25,
-                        0,
-                      ),
-                      child: Text(
-                        "Chicken Breast is one of the meatier cuts of a Chicken, which comes from the breast-bone of the bird. This cut is skinless and has a supple texture. A good source of vitamins and minerals, Chicken Breast, is also a great choice for a lean protein diet. Apply a flavourful spice-rub and pan-fry, bake, grill, or slow-cook the Chicken Breast to relish this versatile cut. Order fresh Chicken Breast online from Licious and get it home-delivered.",
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: "Mulish",
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(
-                              117,
-                              116,
-                              116,
-                              1,
-                            )),
-                        maxLines: 9,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 23.44,
-                            top: 29.33,
-                          ),
-                          child: Text(
-                            "Net Wt.",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "1kg",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    53,
-                                    53,
-                                    53,
-                                    1,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  22,
+                                  0,
+                                  25,
+                                  0,
                                 ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "500g",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    204,
-                                    204,
-                                    204,
-                                    1,
-                                  ),
+                                child: Text(
+                                  productDet.product.description,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "Mulish",
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromRGBO(
+                                        117,
+                                        116,
+                                        116,
+                                        1,
+                                      )),
+                                  maxLines: 9,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                borderRadius: BorderRadius.circular(5),
                               ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "250g",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    204,
-                                    204,
-                                    204,
-                                    1,
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 23.44,
+                                      top: 29.33,
+                                    ),
+                                    child: Text(
+                                      "Net Wt.",
+                                      style: TextStyle(
+                                          fontFamily: "Mulish",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color.fromRGBO(
+                                            53,
+                                            53,
+                                            53,
+                                            1,
+                                          )),
+                                    ),
                                   ),
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "200g",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    204,
-                                    204,
-                                    204,
-                                    1,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10,
+                                      top: 16.33,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 55,
+                                        height: 55,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "1kg",
+                                          style: TextStyle(
+                                              fontFamily: "Mulish",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color.fromRGBO(
+                                                53,
+                                                53,
+                                                53,
+                                                1,
+                                              )),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1,
+                                            color: Color.fromRGBO(
+                                              53,
+                                              53,
+                                              53,
+                                              1,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 23.44,
-                            top: 29.33,
-                          ),
-                          child: Text(
-                            "Pcs Size",
-                            style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(
-                                  53,
-                                  53,
-                                  53,
-                                  1,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "S",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    53,
-                                    53,
-                                    53,
-                                    1,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10,
+                                      top: 16.33,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 55,
+                                        height: 55,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "500g",
+                                          style: TextStyle(
+                                              fontFamily: "Mulish",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color.fromRGBO(
+                                                53,
+                                                53,
+                                                53,
+                                                1,
+                                              )),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1,
+                                            color: Color.fromRGBO(
+                                              204,
+                                              204,
+                                              204,
+                                              1,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "M",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    204,
-                                    204,
-                                    204,
-                                    1,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10,
+                                      top: 16.33,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 55,
+                                        height: 55,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "250g",
+                                          style: TextStyle(
+                                              fontFamily: "Mulish",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color.fromRGBO(
+                                                53,
+                                                53,
+                                                53,
+                                                1,
+                                              )),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1,
+                                            color: Color.fromRGBO(
+                                              204,
+                                              204,
+                                              204,
+                                              1,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            top: 16.33,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "L",
-                                style: TextStyle(
-                                    fontFamily: "Mulish",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(
-                                      53,
-                                      53,
-                                      53,
-                                      1,
-                                    )),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color.fromRGBO(
-                                    204,
-                                    204,
-                                    204,
-                                    1,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10,
+                                      top: 16.33,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 55,
+                                        height: 55,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "200g",
+                                          style: TextStyle(
+                                              fontFamily: "Mulish",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color.fromRGBO(
+                                                53,
+                                                53,
+                                                53,
+                                                1,
+                                              )),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1,
+                                            color: Color.fromRGBO(
+                                              204,
+                                              204,
+                                              204,
+                                              1,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                borderRadius: BorderRadius.circular(5),
+                                ],
                               ),
-                            ),
+                              isPieces
+                                  ? Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 23.44,
+                                            top: 29.33,
+                                          ),
+                                          child: Text(
+                                            "Pcs Size",
+                                            style: TextStyle(
+                                                fontFamily: "Mulish",
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color.fromRGBO(
+                                                  53,
+                                                  53,
+                                                  53,
+                                                  1,
+                                                )),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 10,
+                                            top: 16.33,
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              width: 55,
+                                              height: 55,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "S",
+                                                style: TextStyle(
+                                                    fontFamily: "Mulish",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color.fromRGBO(
+                                                      53,
+                                                      53,
+                                                      53,
+                                                      1,
+                                                    )),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1,
+                                                  color: Color.fromRGBO(
+                                                    53,
+                                                    53,
+                                                    53,
+                                                    1,
+                                                  ),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 10,
+                                            top: 16.33,
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              width: 55,
+                                              height: 55,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "M",
+                                                style: TextStyle(
+                                                    fontFamily: "Mulish",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color.fromRGBO(
+                                                      53,
+                                                      53,
+                                                      53,
+                                                      1,
+                                                    )),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1,
+                                                  color: Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 10,
+                                            top: 16.33,
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              width: 55,
+                                              height: 55,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "L",
+                                                style: TextStyle(
+                                                    fontFamily: "Mulish",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color.fromRGBO(
+                                                      53,
+                                                      53,
+                                                      53,
+                                                      1,
+                                                    )),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1,
+                                                  color: Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Text(""),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(22, 19, 0, 12),
                       child: Text(
