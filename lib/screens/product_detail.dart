@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -5,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:meatwow/config/uri.dart';
 import 'package:http/http.dart' as htt;
+import 'package:meatwow/models/cart_model.dart';
 import 'package:meatwow/models/product_details.dart';
 import 'package:meatwow/screens/product_category.dart';
+import 'package:meatwow/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'cart_page.dart';
@@ -30,6 +33,10 @@ class _ProductDetailState extends State<ProductDetail> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPieces = true;
   bool isLoad = false;
+  String product;
+  String productPieces;
+  int productQuantity;
+  String productVariant;
   ProductDetails productDet;
   _ProductDetailState({this.slug});
 
@@ -62,10 +69,56 @@ class _ProductDetailState extends State<ProductDetail> {
       print(y.product.description);
       setState(() {
         productDet = y;
+
         isPieces = productDet.product.isPieces;
         isLoad = false;
+        product = y.product.productVariant.first.product;
+        productVariant = y.product.productVariant.first.sId;
+        productQuantity = 1;
       });
     }
+  }
+
+  addToCart() async {
+    String apiUrl = Ur().uri;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+    // Uri uri = Uri.http('$apiUrl', '/shops/find/shop-location',
+    //     {"coordinates": "$longitude,$latitude"});
+    Uri ur1 = Uri.parse('$apiUrl/cart');
+    print(ur1);
+
+    Map cartData = CartModel(
+      userId: userObject["id"],
+      shop: shopID,
+      product: product,
+      productPieces: "S",
+      productQuantity: productQuantity,
+      productVariant: productVariant,
+    ).toJson();
+    print(cartData);
+    //print("$refToken;$token");
+
+    var resShop = await htt.post(ur1,
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+          "Cookie": "$refToken;$token",
+        },
+        body: json.encode(cartData));
+
+    print(resShop.body);
+  }
+
+  showMessage(context) {
+    final snackBar =
+        SnackBar(content: Text("Sorry we don't deliver in your area"));
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -568,7 +621,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                     child: Text(
                                       "\u{20B9}${productDet.product.productVariant.first.price}",
                                       style: TextStyle(
-                                        fontSize: 24.31,
+                                        fontSize: 20.31,
                                         decoration: TextDecoration.lineThrough,
                                         decorationStyle:
                                             TextDecorationStyle.solid,
@@ -1348,7 +1401,19 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    if (shopID != null) {
+                      addToCart();
+                      Timer(
+                          Duration(seconds: 2),
+                          () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CartPage())));
+                    } else {
+                      showMessage(context);
+                    }
+                  },
                   child: Container(
                     height: 54,
                     width: MediaQuery.of(context).size.width,

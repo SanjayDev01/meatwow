@@ -10,6 +10,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 dynamic userObject;
+String shopID;
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -18,6 +19,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool firstLogin = true;
+  bool signUp = false;
 
   getUserInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,12 +39,17 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         firstLogin = false;
       });
+    } else {
+      signUp = true;
     }
     Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return firstLogin ? LoginScreen() : HomeScreen();
+              return firstLogin
+                  ? LoginScreen()
+                  //(signUp ? SignUpScreen() : LoginScreen())
+                  : HomeScreen();
             })));
   }
 

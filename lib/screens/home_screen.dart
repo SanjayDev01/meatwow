@@ -13,6 +13,7 @@ import 'package:meatwow/screens/cart_page.dart';
 import 'package:meatwow/screens/my_account.dart';
 import 'package:meatwow/screens/product_category.dart';
 import 'package:meatwow/screens/product_detail.dart';
+import 'package:meatwow/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -111,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
         var y = z.shop as Shop;
         var shopId = y.id;
         print(shopId);
+        shopID = shopId;
         Uri ur = Uri.parse(
             '$apiUrl/products?limit=10&offset=0&forAdmin=false&shopId=$shopId');
         //'/products/chicken-breast');

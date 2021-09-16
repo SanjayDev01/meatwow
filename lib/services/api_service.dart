@@ -7,7 +7,7 @@ class APIService {
   Future<SignUpResponse> signUp(SignUpRequest signUpRequest) async {
     String apiUrl = Ur().uri;
 
-    Uri uri = Uri.http('$apiUrl', '/auth/signup-phone');
+    Uri uri = Uri.parse('$apiUrl/auth/signup-phone');
 
     final response = await http.post(
       uri,
