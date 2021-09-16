@@ -114,10 +114,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   showMessage(context) {
     final snackBar =
-        SnackBar(content: Text("Sorry we don't deliver in your area"));
+        SnackBar(content: Text("Sorry we don't deliver in your location"));
 
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
