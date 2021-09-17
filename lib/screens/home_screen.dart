@@ -182,8 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
             .map<Widget>(
               (e) => GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProductDetail()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProductDetail(
+                                slug: e.slug,
+                              )));
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(

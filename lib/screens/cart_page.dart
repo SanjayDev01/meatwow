@@ -1,7 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:meatwow/config/uri.dart';
+import 'package:meatwow/models/cart_model.dart';
 import 'package:meatwow/screens/checkout.dart';
 import 'package:meatwow/screens/splash_screen.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as htt;
 import 'address.dart';
 
 class CartPage extends StatefulWidget {
@@ -11,6 +17,9 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   bool validLocation = false;
+  bool isLoad = false;
+  GetCart getCart;
+  String productId;
 
   @override
   void initState() {
@@ -25,7 +34,63 @@ class _CartPageState extends State<CartPage> {
     super.initState();
   }
 
-  getCartData() {}
+  getCartData() async {
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+    String userId = userObject["id"];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.parse('$apiUrl/cart?shopId=$shopID&userId=$userId');
+    var resProDetail = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resProDetail != null) {
+      var y = GetCart.fromJson(json.decode(resProDetail.body));
+      print(y.cart.first.sId);
+      setState(() {
+        getCart = y;
+        isLoad = false;
+        productId = y.cart.first.sId;
+      });
+    }
+  }
+
+  deleteOrder() async {
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+    String userId = userObject["id"];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.parse('$apiUrl/cart/$productId');
+    var resProDetail = await htt.delete(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resProDetail != null) {
+      // var y = GetCart.fromJson(json.decode(resProDetail.body));
+      print("Deleted $productId");
+      setState(() {
+        isLoad = false;
+      });
+      getCartData();
+    }
+  }
+
   showSnack(context) {
     final snackBar =
         SnackBar(content: Text("Sorry we don't deliver in your location"));
@@ -75,146 +140,197 @@ class _CartPageState extends State<CartPage> {
               validLocation
                   ? Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(13),
-                          child: Container(
-                            height: 116,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Card(
-                              elevation: 3.0,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 18,
-                                            ),
-                                            child: Text(
-                                              "Chicken Breast",
-                                              style: TextStyle(
-                                                  fontFamily: "Mulish",
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color.fromRGBO(
-                                                    8,
-                                                    50,
-                                                    81,
-                                                    1,
-                                                  )),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 18,
-                                            ),
-                                            child: Text(
-                                              "Net Wt: 500gm",
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    117, 116, 116, 1),
-                                                fontFamily: "Mulish",
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 10),
-                                        child: IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.close,
-                                            )),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 4,
-                                            ),
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                  Icons.remove_circle_outline),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 11,
-                                              right: 11,
-                                            ),
-                                            child: Text(
-                                              "1",
-                                              style: TextStyle(
-                                                fontFamily: "Mulish",
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color.fromRGBO(
-                                                  8,
-                                                  50,
-                                                  81,
-                                                  1,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.add_circle_outline,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 22),
-                                        child: Text(
-                                          "\u{20B9}${219}",
-                                          style: TextStyle(
-                                            fontFamily: "Mulish",
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 20,
+                        isLoad
+                            ? LinearProgressIndicator(
+                                minHeight: 6,
+                                backgroundColor: Colors.white,
+                                color: Color.fromRGBO(163, 18, 28, 1),
+                              )
+                            : Column(
+                                children: getCart.cart
+                                    .map(
+                                      (e) => Padding(
+                                        padding: const EdgeInsets.all(13),
+                                        child: Container(
+                                          height: 116,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          decoration: BoxDecoration(
                                             color: Color.fromRGBO(
-                                              163,
-                                              18,
-                                              28,
-                                              1,
+                                                255, 255, 255, 1),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Card(
+                                            elevation: 3.0,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 12,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 18,
+                                                          ),
+                                                          child: Text(
+                                                            e.product.title,
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Mulish",
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                  8,
+                                                                  50,
+                                                                  81,
+                                                                  1,
+                                                                )),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 18,
+                                                          ),
+                                                          child: Text(
+                                                            "Net Wt: ${e.productVariant.productQuantityType}gm",
+                                                            style: TextStyle(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      117,
+                                                                      116,
+                                                                      116,
+                                                                      1),
+                                                              fontFamily:
+                                                                  "Mulish",
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 10),
+                                                      child: IconButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              productId = e.sId;
+                                                            });
+                                                            print(productId);
+                                                            deleteOrder();
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                          )),
+                                                    )
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 4,
+                                                          ),
+                                                          child: IconButton(
+                                                            onPressed: () {},
+                                                            icon: Icon(Icons
+                                                                .remove_circle_outline),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            left: 11,
+                                                            right: 11,
+                                                          ),
+                                                          child: Text(
+                                                            "1",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  "Mulish",
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                8,
+                                                                50,
+                                                                81,
+                                                                1,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        IconButton(
+                                                          onPressed: () {},
+                                                          icon: Icon(
+                                                            Icons
+                                                                .add_circle_outline,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 22),
+                                                      child: Text(
+                                                        "\u{20B9}${e.productVariant.salePrice}",
+                                                        style: TextStyle(
+                                                          fontFamily: "Mulish",
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                          fontSize: 20,
+                                                          color: Color.fromRGBO(
+                                                            163,
+                                                            18,
+                                                            28,
+                                                            1,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
                                             ),
                                           ),
                                         ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                                      ),
+                                    )
+                                    .toList()),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 26,
