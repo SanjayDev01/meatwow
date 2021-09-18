@@ -26,8 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Map<String, dynamic> userMap;
     final String userStr = prefs.getString('c_access_token');
+    String refString = prefs.getString('c_refToken');
+    print(userStr);
+    print(refString);
     if (userStr != null) {
-      print(userStr);
       userMap = JwtDecoder.decode(userStr);
       //  print(userMap["id"]);
       userObject = userMap;
@@ -43,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
       signUp = true;
     }
     Timer(
-        Duration(seconds: 3),
+        Duration(seconds: 2),
         () => Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
               return firstLogin

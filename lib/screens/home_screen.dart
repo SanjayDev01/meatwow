@@ -194,16 +194,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 23.71,
                   ),
                   child: Card(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
                     child: Container(
                       width: 247.9,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3.21),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       height: 353.7,
                       child: Column(
                         children: [
                           Image.network(
                             e.image,
+                            fit: BoxFit.fill,
+
                             scale: 0.5,
                             //width: 257,
                             //height: 239,
@@ -390,10 +395,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 23.71,
                   ),
                   child: Card(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
                     child: Container(
                       width: 247.9,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3.21),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       height: 353.7,
                       child: Column(

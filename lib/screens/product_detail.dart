@@ -33,11 +33,21 @@ class _ProductDetailState extends State<ProductDetail> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPieces = true;
   bool isLoad = false;
+  bool isSelected1 = false;
+  bool isSelected2 = false;
+
+  bool isSelected3 = false;
+
+  bool isSelected4 = false;
+
   String product;
   String productPieces;
   int productQuantity;
   String productVariant;
+  List<ProductVariant> pVariant;
   ProductDetails productDet;
+  int salePrice;
+  int price;
   _ProductDetailState({this.slug});
 
   @override
@@ -75,6 +85,10 @@ class _ProductDetailState extends State<ProductDetail> {
         product = y.product.productVariant.first.product;
         productVariant = y.product.productVariant.first.sId;
         productQuantity = 1;
+        salePrice = y.product.productVariant.first.salePrice;
+        price = y.product.productVariant.first.price;
+        pVariant = y.product.productVariant;
+        isSelected1 = true;
       });
     }
   }
@@ -597,9 +611,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 60, top: 16, right: 25),
+                                        left: 100, top: 16, right: 0),
                                     child: Text(
-                                      "\u{20B9}${productDet.product.productVariant.first.salePrice}",
+                                      "\u{20B9}$salePrice",
                                       style: TextStyle(
                                         fontSize: 24.31,
                                         fontFamily: "Mulish",
@@ -617,9 +631,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                     padding: const EdgeInsets.only(
                                         left: 0, top: 16, right: 25),
                                     child: Text(
-                                      "\u{20B9}${productDet.product.productVariant.first.price}",
+                                      "\u{20B9}$price",
                                       style: TextStyle(
-                                        fontSize: 20.31,
+                                        fontSize: 17.31,
                                         decoration: TextDecoration.lineThrough,
                                         decorationStyle:
                                             TextDecorationStyle.solid,
@@ -635,6 +649,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                     ),
                                   ),
                                 ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                               ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
@@ -709,7 +725,17 @@ class _ProductDetailState extends State<ProductDetail> {
                                       top: 16.33,
                                     ),
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          productVariant = pVariant[0].sId;
+                                          salePrice = pVariant[0].salePrice;
+                                          price = pVariant[0].price;
+                                          isSelected1 = true;
+                                          isSelected2 = false;
+                                          isSelected3 = false;
+                                          isSelected4 = false;
+                                        });
+                                      },
                                       child: Container(
                                         width: 55,
                                         height: 55,
@@ -730,12 +756,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 1,
-                                            color: Color.fromRGBO(
-                                              53,
-                                              53,
-                                              53,
-                                              1,
-                                            ),
+                                            color: isSelected1
+                                                ? Color.fromRGBO(
+                                                    53,
+                                                    53,
+                                                    53,
+                                                    1,
+                                                  )
+                                                : Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(5),
@@ -749,7 +782,17 @@ class _ProductDetailState extends State<ProductDetail> {
                                       top: 16.33,
                                     ),
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          productVariant = pVariant[1].sId;
+                                          salePrice = pVariant[1].salePrice;
+                                          price = pVariant[1].price;
+                                          isSelected1 = false;
+                                          isSelected2 = true;
+                                          isSelected3 = false;
+                                          isSelected4 = false;
+                                        });
+                                      },
                                       child: Container(
                                         width: 55,
                                         height: 55,
@@ -770,12 +813,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 1,
-                                            color: Color.fromRGBO(
-                                              204,
-                                              204,
-                                              204,
-                                              1,
-                                            ),
+                                            color: isSelected2
+                                                ? Color.fromRGBO(
+                                                    53,
+                                                    53,
+                                                    53,
+                                                    1,
+                                                  )
+                                                : Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(5),
@@ -789,7 +839,17 @@ class _ProductDetailState extends State<ProductDetail> {
                                       top: 16.33,
                                     ),
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          productVariant = pVariant[2].sId;
+                                          salePrice = pVariant[2].salePrice;
+                                          price = pVariant[2].price;
+                                          isSelected1 = false;
+                                          isSelected2 = false;
+                                          isSelected3 = true;
+                                          isSelected4 = false;
+                                        });
+                                      },
                                       child: Container(
                                         width: 55,
                                         height: 55,
@@ -810,12 +870,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 1,
-                                            color: Color.fromRGBO(
-                                              204,
-                                              204,
-                                              204,
-                                              1,
-                                            ),
+                                            color: isSelected3
+                                                ? Color.fromRGBO(
+                                                    53,
+                                                    53,
+                                                    53,
+                                                    1,
+                                                  )
+                                                : Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(5),
@@ -829,7 +896,17 @@ class _ProductDetailState extends State<ProductDetail> {
                                       top: 16.33,
                                     ),
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          productVariant = pVariant[3].sId;
+                                          salePrice = pVariant[3].salePrice;
+                                          price = pVariant[3].price;
+                                          isSelected1 = false;
+                                          isSelected2 = false;
+                                          isSelected3 = false;
+                                          isSelected4 = true;
+                                        });
+                                      },
                                       child: Container(
                                         width: 55,
                                         height: 55,
@@ -850,12 +927,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 1,
-                                            color: Color.fromRGBO(
-                                              204,
-                                              204,
-                                              204,
-                                              1,
-                                            ),
+                                            color: isSelected4
+                                                ? Color.fromRGBO(
+                                                    53,
+                                                    53,
+                                                    53,
+                                                    1,
+                                                  )
+                                                : Color.fromRGBO(
+                                                    204,
+                                                    204,
+                                                    204,
+                                                    1,
+                                                  ),
                                           ),
                                           borderRadius:
                                               BorderRadius.circular(5),

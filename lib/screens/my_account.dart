@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:meatwow/config/uri.dart';
+import 'package:meatwow/models/user.dart';
 import 'package:meatwow/screens/login_screen.dart';
 import 'package:meatwow/screens/my_address.dart';
 import 'package:meatwow/screens/my_orders.dart';
+import 'package:http/http.dart' as htt;
 import 'package:meatwow/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,11 +19,29 @@ class MyAccount extends StatefulWidget {
 
 class _MyAccountState extends State<MyAccount> {
   void _handleSignOut(context) async {
+    String apiUrl = Ur().uri;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("c_refToken");
-    prefs.remove("c_access_token");
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+    print(refToken);
+    print(token);
+    Uri ur = Uri.parse('$apiUrl/auth/signout');
+    var resSignout = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "c_refToken=$refToken;c_access_token=$token",
+    });
+    print(resSignout.statusCode);
+    var signOut = SignOut.fromJson(json.decode(resSignout.body));
+
+    if (signOut.msg) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove("c_refToken");
+      prefs.remove("c_access_token");
+      print("Cookies Deleted");
+      Navigator.pop(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    }
   }
 
   @override

@@ -43,3 +43,13 @@ class User {
     );
   }
 }
+
+class SignOut {
+  bool msg;
+
+  SignOut({this.msg});
+
+  SignOut.fromJson(Map<String, dynamic> json) {
+    msg = json['msg'];
+  }
+}
