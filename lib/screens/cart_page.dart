@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 import 'package:meatwow/config/uri.dart';
 import 'package:meatwow/models/cart_model.dart';
+import 'package:meatwow/models/coupon.dart';
+import 'package:meatwow/models/user.dart';
+import 'package:meatwow/models/user.dart';
 import 'package:meatwow/screens/checkout.dart';
 import 'package:meatwow/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +24,11 @@ class _CartPageState extends State<CartPage> {
   bool isLoad = false;
   GetCart getCart;
   String productId;
+  int subTotal = 0;
+  int productQuantity;
+  String couponCode;
+  int discount = 0;
+  TextEditingController couponController = TextEditingController();
 
   @override
   void initState() {
@@ -59,6 +68,54 @@ class _CartPageState extends State<CartPage> {
         getCart = y;
         isLoad = false;
         productId = y.cart.first.sId;
+        productQuantity = y.cart.first.productQuantity;
+        if (subTotal == 0) {
+          final list = y.cart.map((e) => e.productVariant.salePrice);
+          subTotal = list.sum;
+          print(subTotal);
+        }
+
+        // subTotal = y.cart.forEach((element) {
+        //   subTotal += element.productQuantity;
+        // });
+      });
+    } else {
+      setState(() {
+        validLocation = false;
+      });
+    }
+  }
+
+  updateCartData() async {
+    Map patchBody = {
+      "productQuantity": productQuantity,
+    };
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.parse('$apiUrl/cart/$productId');
+    var resCartDetail = await htt.patch(
+      ur,
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+        "Cookie": "$refToken;$token",
+      },
+      body: json.encode(patchBody),
+    );
+
+    var resCart = SignOut.fromJson(json.decode(resCartDetail.body));
+
+    if (resCart.msg) {
+      setState(() {
+        isLoad = false;
+        productId = getCart.cart.first.sId;
       });
     }
   }
@@ -68,7 +125,6 @@ class _CartPageState extends State<CartPage> {
       isLoad = true;
     });
     String apiUrl = Ur().uri;
-    String userId = userObject["id"];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String refToken = prefs.getString("c_refToken");
@@ -89,6 +145,50 @@ class _CartPageState extends State<CartPage> {
       });
       getCartData();
     }
+  }
+
+  getCoupon(context) async {
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+    //print(couponCode);
+
+    Uri ur =
+        Uri.parse('$apiUrl/coupon/validate-coupon/${couponCode.toUpperCase()}');
+    var resCoupon = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    var boolCoupon = DiscountCoupon.fromJson(json.decode(resCoupon.body));
+    if (resCoupon.statusCode == 200) {
+      discount = boolCoupon.coupon.discount;
+      showSnackForCoupon(context);
+    } else {
+      showSnackForCouponFailed(context);
+    }
+    setState(() {
+      isLoad = false;
+    });
+  }
+
+  showSnackForCouponFailed(context) {
+    final snackBar = SnackBar(content: Text('Your Coupon is invalid!'));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  showSnackForCoupon(context) {
+    final snackBar =
+        SnackBar(content: Text('Congrats your Coupon is Applied!'));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   showSnack(context) {
@@ -211,7 +311,11 @@ class _CartPageState extends State<CartPage> {
                                                             left: 18,
                                                           ),
                                                           child: Text(
-                                                            "Net Wt: ${e.productVariant.productQuantityType}gm",
+                                                            e.productVariant
+                                                                        .productQuantityType >
+                                                                    999
+                                                                ? "Net Wt: ${e.productVariant.productQuantityType} Kg"
+                                                                : "Net Wt: ${e.productVariant.productQuantityType} g",
                                                             style: TextStyle(
                                                               color: Color
                                                                   .fromRGBO(
@@ -262,7 +366,25 @@ class _CartPageState extends State<CartPage> {
                                                             left: 4,
                                                           ),
                                                           child: IconButton(
-                                                            onPressed: () {},
+                                                            onPressed:
+                                                                (e.productQuantity >
+                                                                        1)
+                                                                    ? () {
+                                                                        setState(
+                                                                            () {
+                                                                          productQuantity =
+                                                                              e.productQuantity - 1;
+                                                                          productId =
+                                                                              e.sId;
+                                                                          subTotal =
+                                                                              subTotal - e.productVariant.salePrice;
+                                                                          print(
+                                                                              subTotal);
+                                                                        });
+                                                                        updateCartData();
+                                                                        getCartData();
+                                                                      }
+                                                                    : null,
                                                             icon: Icon(Icons
                                                                 .remove_circle_outline),
                                                           ),
@@ -275,7 +397,8 @@ class _CartPageState extends State<CartPage> {
                                                             right: 11,
                                                           ),
                                                           child: Text(
-                                                            "1",
+                                                            e.productQuantity
+                                                                .toString(),
                                                             style: TextStyle(
                                                               fontFamily:
                                                                   "Mulish",
@@ -294,7 +417,19 @@ class _CartPageState extends State<CartPage> {
                                                           ),
                                                         ),
                                                         IconButton(
-                                                          onPressed: () {},
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              productQuantity =
+                                                                  e.productQuantity +
+                                                                      1;
+                                                              productId = e.sId;
+                                                              subTotal = subTotal +
+                                                                  e.productVariant
+                                                                      .salePrice;
+                                                            });
+                                                            updateCartData();
+                                                            getCartData();
+                                                          },
                                                           icon: Icon(
                                                             Icons
                                                                 .add_circle_outline,
@@ -307,7 +442,7 @@ class _CartPageState extends State<CartPage> {
                                                           const EdgeInsets.only(
                                                               right: 22),
                                                       child: Text(
-                                                        "\u{20B9}${e.productVariant.salePrice}",
+                                                        "\u{20B9}${e.productQuantity * e.productVariant.salePrice}",
                                                         style: TextStyle(
                                                           fontFamily: "Mulish",
                                                           fontWeight:
@@ -356,7 +491,10 @@ class _CartPageState extends State<CartPage> {
                               alignment: Alignment.center,
                               child: TextFormField(
                                 textAlign: TextAlign.left,
+                                controller: couponController,
                                 textAlignVertical: TextAlignVertical.bottom,
+                                textCapitalization:
+                                    TextCapitalization.characters,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     hintText: "Enter Coupon code",
@@ -372,7 +510,12 @@ class _CartPageState extends State<CartPage> {
                               padding:
                                   const EdgeInsets.only(left: 0, right: 18),
                               child: GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  setState(() {
+                                    couponCode = couponController.text;
+                                  });
+                                  getCoupon(context);
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Color.fromRGBO(
@@ -466,7 +609,7 @@ class _CartPageState extends State<CartPage> {
                                     Padding(
                                       padding: const EdgeInsets.only(right: 20),
                                       child: Text(
-                                        "\u{20B9}${219}",
+                                        "\u{20B9}$subTotal",
                                         style: TextStyle(
                                           fontFamily: "Mulish",
                                           fontSize: 16,
@@ -499,7 +642,9 @@ class _CartPageState extends State<CartPage> {
                                     Padding(
                                       padding: const EdgeInsets.only(right: 20),
                                       child: Text(
-                                        "- \u{20B9}${20}",
+                                        discount != 0
+                                            ? "- \u{20B9}${subTotal * discount / 100}"
+                                            : "- \u{20B9}0",
                                         style: TextStyle(
                                           fontFamily: "Mulish",
                                           fontSize: 16,
@@ -543,7 +688,7 @@ class _CartPageState extends State<CartPage> {
                                       padding: const EdgeInsets.only(
                                           right: 20, bottom: 16),
                                       child: Text(
-                                        "\u{20B9}${199}",
+                                        "\u{20B9}${subTotal - (subTotal * discount / 100)}",
                                         style: TextStyle(
                                           fontFamily: "Mulish",
                                           fontSize: 18,

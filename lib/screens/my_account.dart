@@ -39,7 +39,7 @@ class _MyAccountState extends State<MyAccount> {
       prefs.remove("c_refToken");
       prefs.remove("c_access_token");
       print("Cookies Deleted");
-      Navigator.pop(
+      Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen()));
     }
   }

@@ -741,7 +741,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                         height: 55,
                                         alignment: Alignment.center,
                                         child: Text(
-                                          "1kg",
+                                          pVariant[0].productQuantityType > 999
+                                              ? "${pVariant[0].productQuantityType / 1000} Kg"
+                                              : "${pVariant[0].productQuantityType} g",
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontFamily: "Mulish",
                                               fontSize: 14,
@@ -798,7 +801,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                         height: 55,
                                         alignment: Alignment.center,
                                         child: Text(
-                                          "500g",
+                                          pVariant[1].productQuantityType > 999
+                                              ? "${pVariant[1].productQuantityType / 1000} Kg"
+                                              : "${pVariant[1].productQuantityType} g",
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontFamily: "Mulish",
                                               fontSize: 14,
@@ -855,7 +861,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                         height: 55,
                                         alignment: Alignment.center,
                                         child: Text(
-                                          "250g",
+                                          pVariant[2].productQuantityType > 999
+                                              ? "${pVariant[2].productQuantityType / 1000} Kg"
+                                              : "${pVariant[2].productQuantityType} g",
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontFamily: "Mulish",
                                               fontSize: 14,
@@ -912,7 +921,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                         height: 55,
                                         alignment: Alignment.center,
                                         child: Text(
-                                          "200g",
+                                          pVariant[3].productQuantityType > 999
+                                              ? "${pVariant[3].productQuantityType / 1000} Kg"
+                                              : "${pVariant[3].productQuantityType} g",
                                           style: TextStyle(
                                               fontFamily: "Mulish",
                                               fontSize: 14,
