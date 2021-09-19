@@ -33,13 +33,8 @@ class _ProductDetailState extends State<ProductDetail> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPieces = true;
   bool isLoad = false;
-  bool isSelected1 = false;
-  bool isSelected2 = false;
-
-  bool isSelected3 = false;
-
-  bool isSelected4 = false;
-
+  int selectedIndex = 0;
+  bool isLoadText = false;
   String product;
   String productPieces;
   int productQuantity;
@@ -88,12 +83,14 @@ class _ProductDetailState extends State<ProductDetail> {
         salePrice = y.product.productVariant.first.salePrice;
         price = y.product.productVariant.first.price;
         pVariant = y.product.productVariant;
-        isSelected1 = true;
       });
     }
   }
 
-  addToCart() async {
+  addToCart(context) async {
+    setState(() {
+      isLoadText = true;
+    });
     String apiUrl = Ur().uri;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -124,6 +121,13 @@ class _ProductDetailState extends State<ProductDetail> {
         body: json.encode(cartData));
 
     print(resShop.body);
+    if (resShop.body != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CartPage()));
+      setState(() {
+        isLoadText = false;
+      });
+    }
   }
 
   showMessage(context) {
@@ -131,6 +135,78 @@ class _ProductDetailState extends State<ProductDetail> {
         SnackBar(content: Text("Sorry we don't deliver in your location"));
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  showWeightOptions(context) {
+    return Expanded(
+      child: Container(
+        height: 75,
+        width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: pVariant.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                top: 16.33,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    productVariant = pVariant[index].sId;
+                    salePrice = pVariant[index].salePrice;
+                    price = pVariant[index].price;
+                    selectedIndex = index;
+                  });
+                },
+                child: Container(
+                  width: 55,
+                  height: 55,
+                  alignment: Alignment.center,
+                  child: Text(
+                    pVariant[index].productQuantityType > 999
+                        ? "${pVariant[index].productQuantityType / 1000} Kg"
+                        : "${pVariant[index].productQuantityType} g",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: "Mulish",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromRGBO(
+                          53,
+                          53,
+                          53,
+                          1,
+                        )),
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: selectedIndex == index
+                          ? Color.fromRGBO(
+                              53,
+                              53,
+                              53,
+                              1,
+                            )
+                          : Color.fromRGBO(
+                              204,
+                              204,
+                              204,
+                              1,
+                            ),
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -719,245 +795,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                           )),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 16.33,
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          productVariant = pVariant[0].sId;
-                                          salePrice = pVariant[0].salePrice;
-                                          price = pVariant[0].price;
-                                          isSelected1 = true;
-                                          isSelected2 = false;
-                                          isSelected3 = false;
-                                          isSelected4 = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 55,
-                                        height: 55,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          pVariant[0].productQuantityType > 999
-                                              ? "${pVariant[0].productQuantityType / 1000} Kg"
-                                              : "${pVariant[0].productQuantityType} g",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color.fromRGBO(
-                                                53,
-                                                53,
-                                                53,
-                                                1,
-                                              )),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: isSelected1
-                                                ? Color.fromRGBO(
-                                                    53,
-                                                    53,
-                                                    53,
-                                                    1,
-                                                  )
-                                                : Color.fromRGBO(
-                                                    204,
-                                                    204,
-                                                    204,
-                                                    1,
-                                                  ),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 16.33,
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          productVariant = pVariant[1].sId;
-                                          salePrice = pVariant[1].salePrice;
-                                          price = pVariant[1].price;
-                                          isSelected1 = false;
-                                          isSelected2 = true;
-                                          isSelected3 = false;
-                                          isSelected4 = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 55,
-                                        height: 55,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          pVariant[1].productQuantityType > 999
-                                              ? "${pVariant[1].productQuantityType / 1000} Kg"
-                                              : "${pVariant[1].productQuantityType} g",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color.fromRGBO(
-                                                53,
-                                                53,
-                                                53,
-                                                1,
-                                              )),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: isSelected2
-                                                ? Color.fromRGBO(
-                                                    53,
-                                                    53,
-                                                    53,
-                                                    1,
-                                                  )
-                                                : Color.fromRGBO(
-                                                    204,
-                                                    204,
-                                                    204,
-                                                    1,
-                                                  ),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 16.33,
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          productVariant = pVariant[2].sId;
-                                          salePrice = pVariant[2].salePrice;
-                                          price = pVariant[2].price;
-                                          isSelected1 = false;
-                                          isSelected2 = false;
-                                          isSelected3 = true;
-                                          isSelected4 = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 55,
-                                        height: 55,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          pVariant[2].productQuantityType > 999
-                                              ? "${pVariant[2].productQuantityType / 1000} Kg"
-                                              : "${pVariant[2].productQuantityType} g",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color.fromRGBO(
-                                                53,
-                                                53,
-                                                53,
-                                                1,
-                                              )),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: isSelected3
-                                                ? Color.fromRGBO(
-                                                    53,
-                                                    53,
-                                                    53,
-                                                    1,
-                                                  )
-                                                : Color.fromRGBO(
-                                                    204,
-                                                    204,
-                                                    204,
-                                                    1,
-                                                  ),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 16.33,
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          productVariant = pVariant[3].sId;
-                                          salePrice = pVariant[3].salePrice;
-                                          price = pVariant[3].price;
-                                          isSelected1 = false;
-                                          isSelected2 = false;
-                                          isSelected3 = false;
-                                          isSelected4 = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 55,
-                                        height: 55,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          pVariant[3].productQuantityType > 999
-                                              ? "${pVariant[3].productQuantityType / 1000} Kg"
-                                              : "${pVariant[3].productQuantityType} g",
-                                          style: TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color.fromRGBO(
-                                                53,
-                                                53,
-                                                53,
-                                                1,
-                                              )),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: isSelected4
-                                                ? Color.fromRGBO(
-                                                    53,
-                                                    53,
-                                                    53,
-                                                    1,
-                                                  )
-                                                : Color.fromRGBO(
-                                                    204,
-                                                    204,
-                                                    204,
-                                                    1,
-                                                  ),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  showWeightOptions(context),
                                 ],
                               ),
                               isPieces
@@ -1496,13 +1334,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 GestureDetector(
                   onTap: () {
                     if (shopID != null) {
-                      addToCart();
-                      Timer(
-                          Duration(seconds: 2),
-                          () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CartPage())));
+                      addToCart(context);
                     } else {
                       showMessage(context);
                     }
@@ -1518,7 +1350,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       1,
                     ),
                     child: Text(
-                      "Add To Cart",
+                      isLoadText ? "Please wait!" : "Add To Cart",
                       style: TextStyle(
                         color: Color.fromRGBO(
                           255,
