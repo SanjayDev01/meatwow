@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 import 'package:meatwow/config/uri.dart';
+import 'package:meatwow/models/billingInfo.dart';
 import 'package:meatwow/models/cart_model.dart';
 import 'package:meatwow/models/coupon.dart';
 import 'package:meatwow/models/user.dart';
@@ -23,16 +24,22 @@ class _CartPageState extends State<CartPage> {
   bool validLocation = false;
   bool isLoad = false;
   GetCart getCart;
+  bool _getCartData = false;
   String productId;
   bool cartIsEmpty = false;
   int subTotal = 0;
   int productQuantity;
+  bool newAddress = true;
+  BillingInfo1 address1;
   String couponCode;
   int discount = 0;
   TextEditingController couponController = TextEditingController();
+  List dummy = ["Loading", ""];
 
   @override
   void initState() {
+    getAddress();
+
     setState(() {
       if (shopID != null) {
         validLocation = true;
@@ -68,6 +75,7 @@ class _CartPageState extends State<CartPage> {
 
       if (y.cart.isNotEmpty) {
         setState(() {
+          _getCartData = true;
           getCart = y;
           isLoad = false;
           productId = y.cart.first.sId;
@@ -93,6 +101,38 @@ class _CartPageState extends State<CartPage> {
         isLoad = false;
       });
     }
+  }
+
+  getAddress() async {
+    setState(() {
+      isLoad = true;
+    });
+    String apiUrl = Ur().uri;
+    String userId = userObject['id'];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+    //print(couponCode);
+
+    Uri ur = Uri.parse('$apiUrl/user/billing-info/$userId');
+    var resAddress = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    var address = BillingInfo1.fromJson(json.decode(resAddress.body));
+    print(address);
+    if (address.msg) {
+      setState(() {
+        newAddress = false;
+        address1 = address;
+      });
+    }
+
+    setState(() {
+      isLoad = false;
+    });
   }
 
   updateCartData() async {
@@ -280,137 +320,138 @@ class _CartPageState extends State<CartPage> {
                                     color: Color.fromRGBO(163, 18, 28, 1),
                                   )
                                 : Column(
-                                    children: getCart.cart
-                                        .map(
-                                          (e) => Padding(
-                                            padding: const EdgeInsets.all(13),
-                                            child: Container(
-                                              height: 116,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    255, 255, 255, 1),
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Card(
-                                                elevation: 3.0,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 12,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                    children: _getCartData
+                                        ? getCart.cart
+                                            .map(
+                                              (e) => Padding(
+                                                padding:
+                                                    const EdgeInsets.all(13),
+                                                child: Container(
+                                                  height: 116,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                    color: Color.fromRGBO(
+                                                        255, 255, 255, 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                  child: Card(
+                                                    elevation: 3.0,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                        SizedBox(
+                                                          height: 12,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
                                                           children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                left: 18,
-                                                              ),
-                                                              child: Text(
-                                                                e.product.title,
-                                                                style:
-                                                                    TextStyle(
-                                                                        fontFamily:
-                                                                            "Mulish",
-                                                                        fontSize:
-                                                                            15,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w600,
-                                                                        color: Color
-                                                                            .fromRGBO(
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    left: 18,
+                                                                  ),
+                                                                  child: Text(
+                                                                    e.product
+                                                                        .title,
+                                                                    style: TextStyle(
+                                                                        fontFamily: "Mulish",
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Color.fromRGBO(
                                                                           8,
                                                                           50,
                                                                           81,
                                                                           1,
                                                                         )),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                left: 18,
-                                                              ),
-                                                              child: Text(
-                                                                e.productVariant
-                                                                            .productQuantityType >
-                                                                        999
-                                                                    ? "Net Wt: ${e.productVariant.productQuantityType} Kg"
-                                                                    : "Net Wt: ${e.productVariant.productQuantityType} g",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    left: 18,
+                                                                  ),
+                                                                  child: Text(
+                                                                    e.productVariant.productQuantityType >
+                                                                            999
+                                                                        ? "Net Wt: ${e.productVariant.productQuantityType} Kg"
+                                                                        : "Net Wt: ${e.productVariant.productQuantityType} g",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color.fromRGBO(
                                                                           117,
                                                                           116,
                                                                           116,
                                                                           1),
-                                                                  fontFamily:
-                                                                      "Mulish",
-                                                                  fontSize: 11,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
+                                                                      fontFamily:
+                                                                          "Mulish",
+                                                                      fontSize:
+                                                                          11,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                              ],
                                                             ),
-                                                          ],
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 10),
-                                                          child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  productId =
-                                                                      e.sId;
-                                                                  subTotal = subTotal -
-                                                                      e.productVariant
-                                                                          .salePrice;
-                                                                });
-                                                                print(
-                                                                    productId);
-                                                                deleteOrder();
-                                                              },
-                                                              icon: Icon(
-                                                                Icons.close,
-                                                              )),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Row(
-                                                          children: [
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .only(
-                                                                left: 4,
-                                                              ),
+                                                                          .only(
+                                                                      right:
+                                                                          10),
                                                               child: IconButton(
-                                                                onPressed:
-                                                                    (e.productQuantity >
+                                                                  onPressed:
+                                                                      () {
+                                                                    setState(
+                                                                        () {
+                                                                      productId =
+                                                                          e.sId;
+                                                                      subTotal =
+                                                                          subTotal -
+                                                                              e.productVariant.salePrice;
+                                                                    });
+                                                                    print(
+                                                                        productId);
+                                                                    deleteOrder();
+                                                                  },
+                                                                  icon: Icon(
+                                                                    Icons.close,
+                                                                  )),
+                                                            )
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    left: 4,
+                                                                  ),
+                                                                  child:
+                                                                      IconButton(
+                                                                    onPressed: (e.productQuantity >
                                                                             1)
                                                                         ? () {
                                                                             setState(() {
@@ -423,93 +464,110 @@ class _CartPageState extends State<CartPage> {
                                                                             getCartData();
                                                                           }
                                                                         : null,
-                                                                icon: Icon(Icons
-                                                                    .remove_circle_outline),
-                                                              ),
+                                                                    icon: Icon(Icons
+                                                                        .remove_circle_outline),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    left: 11,
+                                                                    right: 11,
+                                                                  ),
+                                                                  child: Text(
+                                                                    e.productQuantity
+                                                                        .toString(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontFamily:
+                                                                          "Mulish",
+                                                                      fontSize:
+                                                                          18,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                        8,
+                                                                        50,
+                                                                        81,
+                                                                        1,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    setState(
+                                                                        () {
+                                                                      productQuantity =
+                                                                          e.productQuantity +
+                                                                              1;
+                                                                      productId =
+                                                                          e.sId;
+                                                                      subTotal =
+                                                                          subTotal +
+                                                                              e.productVariant.salePrice;
+                                                                    });
+                                                                    updateCartData();
+                                                                    getCartData();
+                                                                  },
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .add_circle_outline,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .only(
-                                                                left: 11,
-                                                                right: 11,
-                                                              ),
+                                                                          .only(
+                                                                      right:
+                                                                          22),
                                                               child: Text(
-                                                                e.productQuantity
-                                                                    .toString(),
+                                                                "\u{20B9}${e.productQuantity * e.productVariant.salePrice}",
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
                                                                       "Mulish",
-                                                                  fontSize: 18,
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .w600,
+                                                                          .w800,
+                                                                  fontSize: 20,
                                                                   color: Color
                                                                       .fromRGBO(
-                                                                    8,
-                                                                    50,
-                                                                    81,
+                                                                    163,
+                                                                    18,
+                                                                    28,
                                                                     1,
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  productQuantity =
-                                                                      e.productQuantity +
-                                                                          1;
-                                                                  productId =
-                                                                      e.sId;
-                                                                  subTotal = subTotal +
-                                                                      e.productVariant
-                                                                          .salePrice;
-                                                                });
-                                                                updateCartData();
-                                                                getCartData();
-                                                              },
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .add_circle_outline,
-                                                              ),
-                                                            ),
+                                                            )
                                                           ],
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 22),
-                                                          child: Text(
-                                                            "\u{20B9}${e.productQuantity * e.productVariant.salePrice}",
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  "Mulish",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                              fontSize: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                163,
-                                                                18,
-                                                                28,
-                                                                1,
-                                                              ),
-                                                            ),
-                                                          ),
                                                         )
                                                       ],
-                                                    )
-                                                  ],
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        )
-                                        .toList())),
+                                            )
+                                            .toList()
+                                        : dummy
+                                            .map((e) => Text(
+                                                  e,
+                                                  style: TextStyle(
+                                                    fontFamily: "Mulish",
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color.fromRGBO(
+                                                        80, 80, 80, 1),
+                                                    fontSize: 12,
+                                                  ),
+                                                ))
+                                            .toList())),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 26,
@@ -783,7 +841,9 @@ class _CartPageState extends State<CartPage> {
                                   )),
                                   height: 40,
                                   child: Text(
-                                    "+ Add Address",
+                                    newAddress
+                                        ? "+ Add Address"
+                                        : "Update Address",
                                     style: TextStyle(
                                       color: Color.fromRGBO(163, 18, 28, 1),
                                       fontFamily: "Mulish",
@@ -796,7 +856,10 @@ class _CartPageState extends State<CartPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AddressPage(),
+                                      builder: (context) => AddressPage(
+                                        newAddress: newAddress,
+                                        address1: address1,
+                                      ),
                                     ),
                                   );
                                 },
@@ -843,8 +906,12 @@ class _CartPageState extends State<CartPage> {
           GestureDetector(
             onTap: () {
               validLocation
-                  ? Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => CheckoutPage()))
+                  ? Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CheckoutPage(
+                                address1: address1,
+                              )))
                   // ignore: unnecessary_statements
                   : showSnack(context);
             },

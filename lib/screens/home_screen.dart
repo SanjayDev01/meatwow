@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as htt;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:meatwow/config/uri.dart';
+import 'package:meatwow/models/cart_model.dart';
 import 'package:meatwow/models/productsResponse.dart';
 import 'package:meatwow/models/shops.dart';
 import 'package:meatwow/models/single_product.dart';
@@ -31,8 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
   bool productsFetched = false;
   bool gotLocation = false;
   double longitude;
+  int cartLength = 0;
   double latitude;
-
+  bool cartEmpty = true;
   Product product;
 
   SingleProduct singleProduct;
@@ -85,12 +89,49 @@ class _HomeScreenState extends State<HomeScreen> {
     // getShop(longitude, latitude);
   }
 
-  getShop() async {
+  getCart() async {
     String apiUrl = Ur().uri;
+    String userId = userObject["id"];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String refToken = prefs.getString("c_refToken");
     String token = prefs.getString("c_access_token");
+
+    Uri ur = Uri.parse('$apiUrl/cart?shopId=$shopID&userId=$userId');
+    var resProDetail = await htt.get(ur, headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "1nh3ww98d00SS@e3bgsm!ndg",
+      "Cookie": "$refToken;$token",
+    });
+
+    if (resProDetail.body != null) {
+      var y = GetCart.fromJson(json.decode(resProDetail.body));
+      //print(y.cart.first.sId);
+
+      if (y.cart.isNotEmpty) {
+        setState(() {
+          cartLength = y.cart.length;
+          cartEmpty = false;
+        });
+      }
+    }
+  }
+
+  getShop() async {
+    String apiUrl = Ur().uri;
+    Map<String, dynamic> userMap;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String refToken = prefs.getString("c_refToken");
+    String token = prefs.getString("c_access_token");
+
+    if (token != null) {
+      userMap = JwtDecoder.decode(token);
+      //  print(userMap["id"]);
+      userObject = userMap;
+      print(userObject["id"]);
+    }
+
     // Uri uri = Uri.http('$apiUrl', '/shops/find/shop-location',
     //     {"coordinates": "$longitude,$latitude"});
     Uri ur1 = Uri.parse(
@@ -132,6 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
               singleProduct = c;
             });
           }
+
+          getCart();
 
           // ignore: unnecessary_cast
 
@@ -213,6 +256,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             //width: 257,
                             //height: 239,
                           ),
+                          // CachedNetworkImage(
+                          //   imageUrl: e.image,
+                          //   fit: BoxFit.fill,
+                          // ),
+
                           Container(
                             height: 104,
                             width: 247.9,
@@ -412,6 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             //width: 257,
                             //height: 239,
                           ),
+                          //CachedNetworkImage(imageUrl: e.image),
                           Container(
                             height: 104,
                             width: 247.9,
@@ -760,20 +809,67 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(28, 15, 27.91, 0),
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => CartPage()));
-                                },
-                                icon: Icon(
-                                  Icons.shopping_cart_outlined,
-                                  size: 24,
-                                )),
-                          )
+                              padding:
+                                  const EdgeInsets.fromLTRB(28, 15, 27.91, 0),
+                              child: cartEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CartPage()));
+                                      },
+                                      icon: Icon(
+                                        Icons.shopping_cart_outlined,
+                                        size: 28,
+                                      ))
+                                  : GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CartPage()));
+                                      },
+                                      child: Stack(children: [
+                                        Container(
+                                          height: 44,
+                                          width: 40,
+                                          child: Icon(
+                                            Icons.shopping_cart_outlined,
+                                            color: Color.fromRGBO(
+                                              163,
+                                              18,
+                                              28,
+                                              1,
+                                            ),
+                                            size: 28,
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 20,
+                                          height: 20,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color.fromRGBO(
+                                                163,
+                                                18,
+                                                28,
+                                                1,
+                                              )),
+                                          child: Text(
+                                            cartLength.toString(),
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white,
+                                                fontFamily: "Mulish",
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ], alignment: Alignment.topRight),
+                                    )),
                         ],
                       ),
                       Padding(

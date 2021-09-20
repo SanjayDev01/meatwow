@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       0,
                     ),
                     child: Container(
-                      height: 42,
+                      // height: 42,
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                         textAlign: TextAlign.left,
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (input) => input.length < 10
                             ? "Phone Number should be equal to 10 digits"
                             : null,
-                        textAlignVertical: TextAlignVertical.bottom,
+                        textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             prefix: Text("    "),
@@ -173,11 +173,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       0,
                     ),
                     child: Container(
-                      height: 42,
+                      //  height: 42,
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                         textAlign: TextAlign.left,
-                        textAlignVertical: TextAlignVertical.bottom,
+                        textAlignVertical: TextAlignVertical.center,
                         keyboardType: TextInputType.text,
                         onSaved: (input) {
                           setState(() {

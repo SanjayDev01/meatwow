@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:meatwow/models/billingInfo.dart';
 import 'package:meatwow/screens/order_success.dart';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key key}) : super(key: key);
+  final BillingInfo1 address1;
+  const CheckoutPage({Key key, this.address1}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
